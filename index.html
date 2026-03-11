@@ -139,6 +139,8 @@
     flex-direction: column;
     padding: 0 16px 16px;
     gap: 0;
+    flex: 1;
+    min-height: 0;
   }
 
   /* ── Game Viewport ── */
@@ -154,7 +156,8 @@
     align-items: center;
     gap: 14px;
     padding: 24px 20px 20px;
-    min-height: 340px;
+    flex: 1;
+    min-height: 0;
   }
 
   .game-viewport .game-content {
@@ -249,6 +252,7 @@
     display: flex;
     flex-direction: column;
     gap: 14px;
+    flex-shrink: 0;
   }
 
   /* ── Bet Mode Toggle ── */
@@ -1038,7 +1042,7 @@
     <div class="header-right">
       <div class="balance-pill">
         <div class="balance-dot"></div>
-        $0.02
+        $100.00
       </div>
       <div class="avatar">🎲</div>
     </div>
@@ -1265,7 +1269,7 @@
   const sliderValB = document.getElementById('sliderValB');
   const sliderSep = document.getElementById('sliderSep');
   const sliderFill = document.getElementById('sliderFill');
-  const balance = 0.02;
+  const balance = 100;
   let currentMode = 'rollover';
 
   // ── Multiplier calc ──
@@ -1351,13 +1355,46 @@
   betInput.addEventListener('input', () => updateWin());
 
   // ── Quick amount buttons ──
+  let maxConfirmPending = false;
+  const maxBtn = document.querySelector('.quick-btn[data-action="max"]');
+
   document.querySelectorAll('.quick-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const action = btn.dataset.action;
       let val = parseFloat(betInput.value) || 0;
-      if (action === 'half') val = val / 2;
-      if (action === 'double') val = val * 2;
-      if (action === 'max') val = balance;
+
+      if (action === 'max') {
+        if (!maxConfirmPending) {
+          maxConfirmPending = true;
+          maxBtn.textContent = 'Confirm';
+          maxBtn.style.color = 'var(--green-primary)';
+          maxBtn.style.padding = '18px 14px';
+          setTimeout(() => {
+            if (maxConfirmPending) {
+              maxConfirmPending = false;
+              maxBtn.textContent = 'Max';
+              maxBtn.style.color = '';
+              maxBtn.style.padding = '';
+            }
+          }, 3000);
+          return;
+        }
+        maxConfirmPending = false;
+        maxBtn.textContent = 'Max';
+        maxBtn.style.color = '';
+        maxBtn.style.padding = '';
+        val = balance;
+      } else {
+        if (maxConfirmPending) {
+          maxConfirmPending = false;
+          maxBtn.textContent = 'Max';
+          maxBtn.style.color = '';
+          maxBtn.style.padding = '';
+        }
+        if (action === 'half') val = val / 2;
+        if (action === 'double') val = val * 2;
+      }
+
       betInput.value = Math.max(0, Math.min(val, balance)).toFixed(2);
       updateWin();
     });
