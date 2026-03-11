@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Dicey — Plinko</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0b0a;
+    --surface: #111311;
+    --surface-raised: #161816;
+    --border: #1e201e;
+    --border-focus: #00ab4c;
+    --green-primary: #00ab4c;
+    --green-glow: transparent;
+    --green-dark: #007a36;
+    --green-gradient-start: #0a1a0f;
+    --green-gradient-end: #00ab4c;
+    --text-primary: #e8eee8;
+    --text-secondary: #6b756b;
+    --text-muted: #3d433d;
+    --radius: 8px;
+    --radius-sm: 8px;
+    --radius-xs: 8px;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+  }
+
+  /* ── Shell ── */
+  .app-shell {
+    width: 100%;
+    max-width: 420px;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    background: #0e100f;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 70px;
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    position: relative;
+    z-index: 10;
+  }
+
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .header-brand svg {
+    width: 22px;
+    height: 22px;
+    fill: var(--text-primary);
+  }
+
+  .header-brand span {
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+  }
+
+  .header-brand small {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    display: block;
+    margin-top: -2px;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .balance-pill {
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 6px 14px 6px 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .balance-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green-primary);
+  }
+
+  .avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--surface-raised);
+    border: 1.5px solid var(--border);
+    display: grid;
+    place-items: center;
+    font-size: 16px;
+  }
+
+  /* ── Main content ── */
+  .main-content {
+    display: flex;
+    flex-direction: column;
+    padding: 0 16px 16px;
+    gap: 0;
+  }
+
+  /* ── Game Viewport ── */
+  .game-viewport {
+    border-radius: var(--radius) var(--radius) 0 0;
+    overflow: hidden;
+    position: relative;
+    background: #0a0b0a;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    padding: 12px 8px 0;
+    height: calc(100dvh - 50px - 70px - 48px - 110px - 32px);
+    min-height: 200px;
+  }
+
+  .game-viewport .game-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .game-bottom {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px 12px 12px;
+  }
+
+  .game-viewport::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: none;
+    pointer-events: none;
+  }
+
+  .game-viewport::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='0.6' fill='rgba(255,255,255,0.03)'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  /* ── Bet Controls Wrapper ── */
+  .bet-controls {
+    background: #161816;
+    border-radius: 0 0 var(--radius) var(--radius);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: none;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex-shrink: 0;
+  }
+
+  /* ── Bet Mode Toggle ── */
+  .bet-mode-toggle {
+    display: flex;
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    padding: 4px;
+    gap: 4px;
+  }
+
+  .bet-mode-btn {
+    flex: 1;
+    padding: 9px 10px;
+    border: none;
+    border-radius: var(--radius-xs);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .bet-mode-btn.active {
+    background: var(--surface-raised);
+    color: var(--text-primary);
+  }
+
+  /* ── Manual Bet Settings ── */
+  .manual-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .stat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xs);
+  }
+
+  .stat-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.02em;
+  }
+
+  .stat-value-wrap {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .stat-input {
+    width: 90px;
+    padding: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: right;
+    caret-color: var(--green-primary);
+    -moz-appearance: textfield;
+  }
+
+  .stat-input::-webkit-outer-spin-button,
+  .stat-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .stat-suffix {
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  /* ── Auto Bet Settings ── */
+  .autobet-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .autobet-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .autobet-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .autobet-input-row {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    border-radius: var(--radius-xs);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .autobet-input {
+    flex: 1;
+    min-width: 0;
+    padding: 14px 14px;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-primary);
+    caret-color: var(--green-primary);
+  }
+
+  .autobet-input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .autobet-chips {
+    display: flex;
+    align-items: center;
+    border-left: 1px solid var(--border);
+  }
+
+  .autobet-chip {
+    padding: 10px 12px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.15s ease, background 0.15s ease;
+    border-left: 1px solid var(--border);
+  }
+
+  .autobet-chip:first-child {
+    border-left: none;
+  }
+
+  .autobet-chip:hover {
+    color: var(--green-primary);
+    background: rgba(0, 171, 76, 0.06);
+  }
+
+  .autobet-toggle-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .autobet-seg {
+    display: flex;
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    padding: 4px;
+    gap: 4px;
+  }
+
+  .autobet-seg-btn {
+    flex: 1;
+    padding: 9px 8px;
+    border: none;
+    border-radius: var(--radius-xs);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .autobet-seg-btn.active {
+    background: var(--surface-raised);
+    color: var(--text-primary);
+  }
+
+  .autobet-pct {
+    display: flex;
+    align-items: center;
+    border-radius: var(--radius-xs);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .autobet-pct-input {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 12px;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    caret-color: var(--green-primary);
+  }
+
+  .autobet-pct-sign {
+    padding: 8px 12px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border-left: 1px solid var(--border);
+    background: var(--surface-raised);
+  }
+
+  .autobet-stop-row {
+    display: flex;
+    align-items: stretch;
+    border-radius: var(--radius-xs);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .autobet-stop-row .currency-tag {
+    padding: 0 10px;
+    font-size: 13px;
+  }
+
+  .autobet-stop-input {
+    border: none !important;
+    border-radius: 0 !important;
+  }
+
+  /* ── Bet Button ── */
+  .bet-button {
+    width: 100%;
+    height: 48px;
+    padding: 0 16px;
+    border: none;
+    border-radius: var(--radius);
+    background: var(--green-primary);
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+  }
+
+  .bet-button:active {
+    transform: scale(0.97);
+    box-shadow: none;
+  }
+
+  .bet-button::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .bet-button::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .bet-button:hover::after {
+    opacity: 1;
+  }
+
+  .bet-button .btn-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .bet-button .btn-content svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* ── Bet Input Group ── */
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .input-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .input-label span {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .input-label .potential-win {
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    color: var(--green-primary);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .input-row {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    overflow: hidden;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .input-row:focus-within {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(0, 171, 76, 0.15);
+  }
+
+  .currency-tag {
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: var(--surface-raised);
+    border-right: 1px solid var(--border);
+    user-select: none;
+  }
+
+  .bet-input {
+    flex: 1;
+    min-width: 0;
+    padding: 18px 12px;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: 'Outfit', sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-primary);
+    caret-color: var(--green-primary);
+  }
+
+  .bet-input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .quick-amounts {
+    display: flex;
+    align-items: center;
+    border-left: 1px solid var(--border);
+  }
+
+  .quick-btn {
+    min-width: 48px;
+    padding: 18px 0;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.15s ease, background 0.15s ease;
+    border-left: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .quick-btn:first-child {
+    border-left: none;
+  }
+
+  .quick-btn:hover {
+    color: var(--green-primary);
+    background: rgba(0, 171, 76, 0.06);
+  }
+
+  .quick-btn:active {
+    background: rgba(0, 171, 76, 0.1);
+  }
+
+  /* ── Plinko Board ── */
+  .plinko-container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    min-height: 0;
+  }
+
+  .plinko-board {
+    position: relative;
+    width: 100%;
+    max-width: 380px;
+    aspect-ratio: 1 / 1;
+    max-height: 100%;
+  }
+
+  .plinko-pegs {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 4% 0;
+  }
+
+  .peg-row {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .peg {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.18);
+    flex-shrink: 0;
+    transition: background 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .peg.hit {
+    background: var(--green-primary);
+    box-shadow: 0 0 6px rgba(0, 171, 76, 0.5);
+  }
+
+  .plinko-balls {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  .plinko-ball {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--green-primary);
+    box-shadow: 0 0 8px rgba(0, 171, 76, 0.6), 0 0 16px rgba(0, 171, 76, 0.3);
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    transition: none;
+  }
+
+  /* ── Buckets ── */
+  .plinko-buckets {
+    display: flex;
+    gap: 2px;
+    width: 100%;
+    max-width: 380px;
+    padding: 0;
+    flex-shrink: 0;
+  }
+
+  .bucket {
+    flex: 1;
+    text-align: center;
+    padding: 5px 1px;
+    border-radius: 4px 4px 0 0;
+    font-family: 'Outfit', sans-serif;
+    font-size: 8px;
+    font-weight: 700;
+    color: #fff;
+    min-width: 0;
+    transition: transform 0.15s ease, filter 0.15s ease;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  }
+
+  .bucket.flash {
+    transform: scaleY(1.3);
+    filter: brightness(1.5);
+  }
+
+  /* ── Plinko Settings ── */
+  .plinko-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .plinko-setting {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .plinko-setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2px;
+  }
+
+  .plinko-setting-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.45);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .plinko-setting-val {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .coin-slider-track {
+    position: relative;
+    width: 100%;
+    height: 32px;
+    display: flex;
+    align-items: center;
+  }
+
+  .coin-slider-track::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    pointer-events: none;
+  }
+
+  .coin-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 32px;
+    background: transparent;
+    outline: none;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+  }
+
+  .coin-slider::-webkit-slider-runnable-track {
+    height: 8px;
+    background: transparent;
+    border-radius: 4px;
+  }
+
+  .coin-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--green-primary);
+    border: 2px solid #00c956;
+    box-shadow: 0 0 0 4px rgba(0, 171, 76, 0.15), 0 2px 6px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    margin-top: -8px;
+    transition: box-shadow 0.15s ease;
+  }
+
+  .coin-slider::-webkit-slider-thumb:hover,
+  .coin-slider::-webkit-slider-thumb:active {
+    box-shadow: 0 0 0 6px rgba(0, 171, 76, 0.25), 0 2px 8px rgba(0, 0, 0, 0.4);
+  }
+
+  .coin-slider::-moz-range-track {
+    height: 8px;
+    background: transparent;
+    border-radius: 4px;
+    border: none;
+  }
+
+  .coin-slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--green-primary);
+    border: 2px solid #00c956;
+    box-shadow: 0 0 0 4px rgba(0, 171, 76, 0.15), 0 2px 6px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+  }
+
+  /* ── Risk Toggle ── */
+  .risk-toggle {
+    display: flex;
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+    padding: 3px;
+    gap: 3px;
+  }
+
+  .risk-btn {
+    flex: 1;
+    padding: 8px 8px;
+    border: none;
+    border-radius: var(--radius-xs);
+    background: transparent;
+    color: rgba(255, 255, 255, 0.4);
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .risk-btn.active {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+
+  .risk-btn:hover:not(.active) {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  /* ── Settings Bar ── */
+  .settings-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 2px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .settings-left {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .settings-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 6px;
+    border-radius: var(--radius-xs);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+
+  .settings-btn svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  .settings-btn:hover {
+    color: var(--text-primary);
+    background: rgba(255,255,255,0.04);
+  }
+
+  .settings-btn:active {
+    background: rgba(255,255,255,0.06);
+  }
+
+  .settings-btn.active {
+    color: var(--green-primary);
+  }
+
+  .settings-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+
+  .settings-divider {
+    width: 1px;
+    height: 18px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
+  /* ── Bottom Nav ── */
+  .bottom-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 10px 16px 20px;
+    border-top: 1px solid var(--border);
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 420px;
+    background: #0e100f;
+    z-index: 20;
+  }
+
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 20px;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-family: 'Outfit', sans-serif;
+    font-size: 11px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.15s ease;
+  }
+
+  .nav-item svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .nav-item.active {
+    color: var(--green-primary);
+    background: rgba(0, 171, 76, 0.06);
+  }
+
+  .nav-item:hover:not(.active) {
+    color: var(--text-secondary);
+  }
+
+  /* ── Result Pill ── */
+  .rakeback-row {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 6px;
+    pointer-events: none;
+  }
+
+  .rakeback-pill {
+    flex-shrink: 0;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(8px);
+    padding: 6px 12px;
+    border-radius: 100px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    pointer-events: auto;
+  }
+  .rakeback-pill img {
+    border-radius: 4px;
+  }
+
+  .result-pill-track {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    min-height: 0;
+    flex: 1;
+    min-width: 0;
+    mask-image: linear-gradient(to right, transparent, black 40px);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 40px);
+  }
+  .result-pill-track::-webkit-scrollbar { display: none; }
+
+  .result-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    animation: pillSlideIn 0.3s ease forwards;
+  }
+
+  .result-pill.win {
+    background: rgba(0, 171, 76, 0.2);
+    border: 1px solid rgba(0, 171, 76, 0.4);
+    color: #00e65a;
+  }
+
+  .result-pill.loss {
+    background: rgba(220, 38, 38, 0.2);
+    border: 1px solid rgba(220, 38, 38, 0.4);
+    color: #f87171;
+  }
+
+  @keyframes pillSlideIn {
+    from { transform: translateX(40px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 380px) {
+    .bet-input { font-size: 16px; }
+    .bucket { font-size: 7px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-brand">
+      <div>
+        <span>dicey</span>
+        <small>by Magic Eden</small>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="balance-pill">
+        <div class="balance-dot"></div>
+        $100.00
+      </div>
+      <div class="avatar">🎲</div>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <div class="main-content">
+    <div class="game-viewport">
+      <div class="rakeback-row">
+        <div class="result-pill-track" id="resultTrack"></div>
+        <div class="rakeback-pill">
+          <img src="assets/Rakeboost.svg" alt="Rakeback" width="18" height="18">
+          <span id="rakebackVal">$0.00</span>
+        </div>
+      </div>
+      <div class="game-content">
+        <div class="plinko-container">
+          <div class="plinko-board" id="plinkoBoard">
+            <div class="plinko-pegs" id="plinkoPegs"></div>
+            <div class="plinko-balls" id="plinkoBalls"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plinko Controls -->
+      <div class="game-bottom">
+        <div class="plinko-buckets" id="plinkoBuckets"></div>
+
+        <div class="plinko-settings">
+          <!-- Rows slider -->
+          <div class="plinko-setting">
+            <div class="plinko-setting-row">
+              <span class="plinko-setting-label">Rows</span>
+              <span class="plinko-setting-val" id="rowsVal">16</span>
+            </div>
+            <div class="coin-slider-track">
+              <input type="range" class="coin-slider" id="rowsSlider" min="8" max="16" value="16">
+            </div>
+          </div>
+
+          <!-- Risk level toggle -->
+          <div class="risk-toggle">
+            <button class="risk-btn" data-risk="low">Low</button>
+            <button class="risk-btn active" data-risk="medium">Medium</button>
+            <button class="risk-btn" data-risk="high">High</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bet Controls Wrapper -->
+    <div class="bet-controls">
+      <!-- Bet Button -->
+      <button class="bet-button" id="betBtn">
+        <div class="btn-content">
+          Bet Now
+        </div>
+      </button>
+
+      <!-- Bet Amount Input -->
+      <div class="input-group">
+        <div class="input-label">
+          <span>Bet Amount</span>
+          <span class="potential-win" id="potentialWin">Win: varies by bucket</span>
+        </div>
+        <div class="input-row">
+          <div class="currency-tag">$</div>
+          <input
+            class="bet-input"
+            type="number"
+            inputmode="decimal"
+            placeholder="0.00"
+            id="betAmount"
+            step="0.01"
+            min="0"
+          >
+          <div class="quick-amounts">
+            <button class="quick-btn" data-action="half">½</button>
+            <button class="quick-btn" data-action="double">2×</button>
+            <button class="quick-btn" data-action="max">Max</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bet Mode Toggle -->
+      <div class="bet-mode-toggle">
+        <button class="bet-mode-btn active" data-mode="manual">Manual Bet</button>
+        <button class="bet-mode-btn" data-mode="auto">Auto Bet</button>
+      </div>
+
+      <!-- Manual Bet Settings (visible by default) -->
+      <div class="manual-settings" id="manualSettings">
+        <div class="stat-row">
+          <span class="stat-label">Max Multiplier</span>
+          <div class="stat-value-wrap">
+            <input class="stat-input" type="text" id="multInput" readonly>
+            <span class="stat-suffix">x</span>
+          </div>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Total Buckets</span>
+          <div class="stat-value-wrap">
+            <input class="stat-input" type="text" id="bucketsInput" readonly>
+          </div>
+        </div>
+      </div>
+
+      <!-- Auto Bet Settings (hidden by default) -->
+      <div class="autobet-settings" id="autobetSettings" style="display:none">
+
+        <!-- Number of Bets -->
+        <div class="autobet-field">
+          <span class="autobet-label">Number of Bets</span>
+          <div class="autobet-input-row">
+            <input class="autobet-input" type="number" id="numBets" value="10" min="1" placeholder="10">
+            <div class="autobet-chips">
+              <button class="autobet-chip" data-bets="10">10</button>
+              <button class="autobet-chip" data-bets="100">100</button>
+              <button class="autobet-chip" data-bets="Infinity">&#8734;</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- On Win -->
+        <div class="autobet-field">
+          <span class="autobet-label">On Win</span>
+          <div class="autobet-toggle-row">
+            <div class="autobet-seg">
+              <button class="autobet-seg-btn active" data-action="reset" data-target="onWin">Reset</button>
+              <button class="autobet-seg-btn" data-action="increase" data-target="onWin">Increase by</button>
+            </div>
+            <div class="autobet-pct" id="onWinPct" style="display:none">
+              <input class="autobet-pct-input" type="number" value="50" min="1" max="500">
+              <span class="autobet-pct-sign">%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- On Loss -->
+        <div class="autobet-field">
+          <span class="autobet-label">On Loss</span>
+          <div class="autobet-toggle-row">
+            <div class="autobet-seg">
+              <button class="autobet-seg-btn active" data-action="reset" data-target="onLoss">Reset</button>
+              <button class="autobet-seg-btn" data-action="increase" data-target="onLoss">Increase by</button>
+            </div>
+            <div class="autobet-pct" id="onLossPct" style="display:none">
+              <input class="autobet-pct-input" type="number" value="100" min="1" max="500">
+              <span class="autobet-pct-sign">%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stop on Profit -->
+        <div class="autobet-field">
+          <span class="autobet-label">Stop on Profit</span>
+          <div class="autobet-stop-row">
+            <div class="currency-tag">$</div>
+            <input class="autobet-input autobet-stop-input" type="number" placeholder="0.00" step="0.01" min="0">
+          </div>
+        </div>
+
+        <!-- Stop on Loss -->
+        <div class="autobet-field">
+          <span class="autobet-label">Stop on Loss</span>
+          <div class="autobet-stop-row">
+            <div class="currency-tag">$</div>
+            <input class="autobet-input autobet-stop-input" type="number" placeholder="0.00" step="0.01" min="0">
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Settings Bar -->
+      <div class="settings-bar">
+        <div class="settings-left">
+          <button class="settings-btn" id="settingsBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
+          <button class="settings-btn" id="infoBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          </button>
+          <button class="settings-btn" id="chartBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </button>
+        </div>
+        <button class="settings-btn" id="fairnessBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </button>
+      </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <a href="#" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      Explore
+    </a>
+    <a href="casino.html" class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6 2 10c0 5.25 10 12 10 12s10-6.75 10-12c0-4-4.48-8-10-8z"/></svg>
+      Casino
+    </a>
+    <a href="#" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/><path d="M12 3v12"/><rect x="3" y="17" width="18" height="4" rx="1"/></svg>
+      Sports
+    </a>
+  </nav>
+
+</div>
+
+<script>
+  // ── State ──
+  const betInput = document.getElementById('betAmount');
+  const potentialWin = document.getElementById('potentialWin');
+  const multInput = document.getElementById('multInput');
+  const bucketsInput = document.getElementById('bucketsInput');
+  const rowsSlider = document.getElementById('rowsSlider');
+  const rowsVal = document.getElementById('rowsVal');
+  const resultTrack = document.getElementById('resultTrack');
+  const plinkoPegs = document.getElementById('plinkoPegs');
+  const plinkoBalls = document.getElementById('plinkoBalls');
+  const plinkoBuckets = document.getElementById('plinkoBuckets');
+  const plinkoBoard = document.getElementById('plinkoBoard');
+  const balance = 100;
+  let currentRisk = 'medium';
+  let currentRows = 16;
+  let animating = false;
+
+  // ── Multiplier Tables ──
+  // Format: multiplierTables[risk][rows] = array of multipliers (symmetric, length = rows + 1)
+  const multiplierTables = {
+    low: {
+      8:  [5.6, 2.1, 1.1, 1, 0.5, 1, 1.1, 2.1, 5.6],
+      9:  [5.6, 2, 1.6, 1, 0.7, 0.7, 1, 1.6, 2, 5.6],
+      10: [8.9, 3, 1.4, 1.1, 1, 0.5, 1, 1.1, 1.4, 3, 8.9],
+      11: [8.4, 3, 1.9, 1.3, 1, 0.7, 0.7, 1, 1.3, 1.9, 3, 8.4],
+      12: [10, 3, 1.6, 1.4, 1.1, 1, 0.5, 1, 1.1, 1.4, 1.6, 3, 10],
+      13: [8.1, 4, 3, 1.9, 1.2, 0.9, 0.7, 0.7, 0.9, 1.2, 1.9, 3, 4, 8.1],
+      14: [7.1, 4, 1.9, 1.4, 1.3, 1.1, 1, 0.5, 1, 1.1, 1.3, 1.4, 1.9, 4, 7.1],
+      15: [15, 8, 3, 2, 1.5, 1.1, 1, 0.7, 0.7, 1, 1.1, 1.5, 2, 3, 8, 15],
+      16: [16, 9, 2, 1.4, 1.4, 1.2, 1.1, 1, 0.5, 1, 1.1, 1.2, 1.4, 1.4, 2, 9, 16]
+    },
+    medium: {
+      8:  [13, 3, 1.3, 0.7, 0.4, 0.7, 1.3, 3, 13],
+      9:  [18, 4, 1.7, 0.9, 0.5, 0.5, 0.9, 1.7, 4, 18],
+      10: [22, 5, 2, 1.4, 0.6, 0.4, 0.6, 1.4, 2, 5, 22],
+      11: [24, 6, 3, 1.8, 0.7, 0.5, 0.5, 0.7, 1.8, 3, 6, 24],
+      12: [33, 11, 4, 2, 1.1, 0.6, 0.3, 0.6, 1.1, 2, 4, 11, 33],
+      13: [43, 13, 6, 3, 1.3, 0.7, 0.4, 0.4, 0.7, 1.3, 3, 6, 13, 43],
+      14: [58, 15, 7, 4, 1.9, 1, 0.5, 0.2, 0.5, 1, 1.9, 4, 7, 15, 58],
+      15: [88, 18, 11, 5, 3, 1.3, 0.5, 0.3, 0.3, 0.5, 1.3, 3, 5, 11, 18, 88],
+      16: [110, 41, 10, 5, 3, 1.5, 1, 0.5, 0.3, 0.5, 1, 1.5, 3, 5, 10, 41, 110]
+    },
+    high: {
+      8:  [29, 4, 1.5, 0.3, 0.2, 0.3, 1.5, 4, 29],
+      9:  [43, 7, 2, 0.6, 0.2, 0.2, 0.6, 2, 7, 43],
+      10: [76, 10, 3, 0.9, 0.3, 0.2, 0.3, 0.9, 3, 10, 76],
+      11: [120, 14, 5.2, 1.4, 0.4, 0.2, 0.2, 0.4, 1.4, 5.2, 14, 120],
+      12: [170, 24, 8.1, 2, 0.7, 0.2, 0.2, 0.2, 0.7, 2, 8.1, 24, 170],
+      13: [260, 37, 11, 4, 1, 0.2, 0.2, 0.2, 0.2, 1, 4, 11, 37, 260],
+      14: [420, 56, 18, 5, 1.9, 0.3, 0.2, 0.2, 0.2, 0.3, 1.9, 5, 18, 56, 420],
+      15: [620, 83, 27, 8, 3, 0.5, 0.2, 0.2, 0.2, 0.2, 0.5, 3, 8, 27, 83, 620],
+      16: [1000, 130, 26, 9, 4, 2, 0.2, 0.2, 0.2, 0.2, 0.2, 2, 4, 9, 26, 130, 1000]
+    }
+  };
+
+  // ── Bucket color calculation ──
+  function getBucketColor(index, total) {
+    // Symmetric: edges = green, center = red
+    const center = (total - 1) / 2;
+    const dist = Math.abs(index - center) / center; // 0 = center, 1 = edge
+
+    // Color interpolation: red(center) -> yellow(mid) -> green(edge)
+    if (dist > 0.5) {
+      // Green to yellow
+      const t = (dist - 0.5) * 2;
+      const r = Math.round(255 * (1 - t) + 0 * t);
+      const g = Math.round(200 * (1 - t) + 171 * t);
+      const b = Math.round(0 * (1 - t) + 76 * t);
+      return `rgb(${r}, ${g}, ${b})`;
+    } else {
+      // Yellow to red
+      const t = dist * 2;
+      const r = Math.round(220 * (1 - t) + 255 * t);
+      const g = Math.round(50 * (1 - t) + 200 * t);
+      const b = Math.round(50 * (1 - t) + 0 * t);
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+  }
+
+  // ── Generate peg board ──
+  function generateBoard() {
+    plinkoPegs.innerHTML = '';
+    const rows = currentRows;
+    const boardWidth = plinkoBoard.offsetWidth || 380;
+
+    for (let r = 0; r < rows; r++) {
+      const numPegs = r + 3; // Row 0 has 3 pegs, row 1 has 4, etc.
+      const row = document.createElement('div');
+      row.className = 'peg-row';
+
+      // Calculate spacing based on bottom row width
+      const maxPegs = rows + 2;
+      const pegSpacing = boardWidth / (maxPegs + 1);
+      const rowWidth = pegSpacing * (numPegs - 1);
+
+      row.style.gap = pegSpacing + 'px';
+
+      for (let p = 0; p < numPegs; p++) {
+        const peg = document.createElement('div');
+        peg.className = 'peg';
+        peg.dataset.row = r;
+        peg.dataset.col = p;
+        row.appendChild(peg);
+      }
+      plinkoPegs.appendChild(row);
+    }
+  }
+
+  // ── Generate buckets ──
+  function generateBuckets() {
+    plinkoBuckets.innerHTML = '';
+    const rows = currentRows;
+    const mults = multiplierTables[currentRisk][rows];
+    const numBuckets = mults.length;
+
+    for (let i = 0; i < numBuckets; i++) {
+      const bucket = document.createElement('div');
+      bucket.className = 'bucket';
+      bucket.style.background = getBucketColor(i, numBuckets);
+
+      const mult = mults[i];
+      bucket.textContent = mult >= 1000 ? mult.toFixed(0) + 'x' :
+                           mult >= 100 ? mult.toFixed(0) + 'x' :
+                           mult >= 10 ? mult.toFixed(0) + 'x' :
+                           mult + 'x';
+      bucket.dataset.index = i;
+      plinkoBuckets.appendChild(bucket);
+    }
+
+    // Update manual stats
+    const maxMult = Math.max(...mults);
+    multInput.value = maxMult >= 1000 ? maxMult.toFixed(0) : maxMult;
+    bucketsInput.value = numBuckets;
+    updateWinDisplay();
+  }
+
+  // ── Update win display ──
+  function updateWinDisplay() {
+    const mults = multiplierTables[currentRisk][currentRows];
+    const maxMult = Math.max(...mults);
+    const val = parseFloat(betInput.value) || 0;
+    const maxWin = (val * maxMult).toFixed(2);
+    potentialWin.textContent = `Max: $${maxWin} (${maxMult}x)`;
+  }
+
+  // ── Get peg position ──
+  function getPegPosition(row, col) {
+    const pegRows = plinkoPegs.querySelectorAll('.peg-row');
+    if (!pegRows[row]) return null;
+    const pegs = pegRows[row].querySelectorAll('.peg');
+    if (!pegs[col]) return null;
+
+    const boardRect = plinkoBoard.getBoundingClientRect();
+    const pegRect = pegs[col].getBoundingClientRect();
+
+    return {
+      x: pegRect.left - boardRect.left + pegRect.width / 2,
+      y: pegRect.top - boardRect.top + pegRect.height / 2
+    };
+  }
+
+  // ── Drop ball ──
+  function dropBall() {
+    const rows = currentRows;
+    const mults = multiplierTables[currentRisk][rows];
+
+    // Simulate path: at each row, go left (0) or right (1)
+    const path = [];
+    let col = 0; // relative position: starts at 0, each right adds 1
+
+    // Starting position: top center of board
+    const boardRect = plinkoBoard.getBoundingClientRect();
+    const startX = plinkoBoard.offsetWidth / 2;
+    const startY = 4;
+    path.push({ x: startX, y: startY, row: -1, col: -1 });
+
+    for (let r = 0; r < rows; r++) {
+      const goRight = Math.random() < 0.5 ? 0 : 1;
+      col += goRight;
+
+      const pos = getPegPosition(r, col);
+      if (pos) {
+        // Offset slightly below the peg
+        path.push({ x: pos.x, y: pos.y + 4, row: r, col: col, pegCol: col });
+      }
+    }
+
+    // The bucket index = col (0 to rows)
+    const bucketIndex = col;
+    const multiplier = mults[bucketIndex];
+
+    // Create ball element
+    const ball = document.createElement('div');
+    ball.className = 'plinko-ball';
+    ball.style.left = startX + 'px';
+    ball.style.top = startY + 'px';
+    plinkoBalls.appendChild(ball);
+
+    // Animate ball through path
+    animateBall(ball, path, bucketIndex, multiplier);
+  }
+
+  // ── Animate ball ──
+  function animateBall(ball, path, bucketIndex, multiplier) {
+    let step = 0;
+    const stepDuration = 50; // ms per step
+
+    function animate() {
+      step++;
+      if (step >= path.length) {
+        // Ball reached bottom — animate into bucket
+        const buckets = plinkoBuckets.querySelectorAll('.bucket');
+        const targetBucket = buckets[bucketIndex];
+
+        if (targetBucket) {
+          const bucketRect = targetBucket.getBoundingClientRect();
+          const boardRect = plinkoBoard.getBoundingClientRect();
+          const finalX = bucketRect.left - boardRect.left + bucketRect.width / 2;
+          const finalY = plinkoBoard.offsetHeight;
+
+          ball.style.left = finalX + 'px';
+          ball.style.top = finalY + 'px';
+
+          // Flash bucket
+          targetBucket.classList.add('flash');
+          setTimeout(() => targetBucket.classList.remove('flash'), 300);
+        }
+
+        // Remove ball after a moment
+        setTimeout(() => {
+          if (ball.parentNode) ball.parentNode.removeChild(ball);
+        }, 400);
+
+        // Show result
+        showResult(multiplier);
+        return;
+      }
+
+      const target = path[step];
+
+      // Add slight horizontal randomness for natural feel
+      const jitterX = (Math.random() - 0.5) * 3;
+
+      ball.style.left = (target.x + jitterX) + 'px';
+      ball.style.top = target.y + 'px';
+
+      // Highlight the peg that was hit
+      if (target.row >= 0) {
+        const pegRows = plinkoPegs.querySelectorAll('.peg-row');
+        const pegs = pegRows[target.row]?.querySelectorAll('.peg');
+        if (pegs && pegs[target.pegCol]) {
+          pegs[target.pegCol].classList.add('hit');
+          setTimeout(() => pegs[target.pegCol].classList.remove('hit'), 200);
+        }
+      }
+
+      setTimeout(animate, stepDuration);
+    }
+
+    animate();
+  }
+
+  // ── Show result ──
+  function showResult(multiplier) {
+    const isWin = multiplier >= 1;
+
+    // Show result pill
+    const pill = document.createElement('div');
+    pill.className = `result-pill ${isWin ? 'win' : 'loss'}`;
+    pill.textContent = isWin ? '+' + multiplier + 'x' : multiplier + 'x';
+    resultTrack.appendChild(pill);
+    resultTrack.scrollLeft = resultTrack.scrollWidth;
+
+    // Button press effect
+    const btn = document.getElementById('betBtn');
+    btn.style.transform = 'scale(0.95)';
+    setTimeout(() => btn.style.transform = '', 150);
+  }
+
+  // ── Bet handler ──
+  document.getElementById('betBtn').addEventListener('click', () => {
+    dropBall();
+  });
+
+  // ── Rows slider ──
+  rowsSlider.addEventListener('input', () => {
+    currentRows = parseInt(rowsSlider.value);
+    rowsVal.textContent = currentRows;
+    generateBoard();
+    generateBuckets();
+  });
+
+  // ── Risk toggle ──
+  document.querySelectorAll('.risk-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.risk-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentRisk = btn.dataset.risk;
+      generateBuckets();
+    });
+  });
+
+  // ── Bet input ──
+  betInput.addEventListener('input', () => updateWinDisplay());
+
+  // ── Quick amount buttons ──
+  let maxConfirmPending = false;
+  const maxBtn = document.querySelector('.quick-btn[data-action="max"]');
+
+  document.querySelectorAll('.quick-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const action = btn.dataset.action;
+      let val = parseFloat(betInput.value) || 0;
+
+      if (action === 'max') {
+        if (!maxConfirmPending) {
+          maxConfirmPending = true;
+          maxBtn.textContent = 'Confirm';
+          maxBtn.style.color = 'var(--green-primary)';
+          maxBtn.style.padding = '18px 14px';
+          setTimeout(() => {
+            if (maxConfirmPending) {
+              maxConfirmPending = false;
+              maxBtn.textContent = 'Max';
+              maxBtn.style.color = '';
+              maxBtn.style.padding = '';
+            }
+          }, 3000);
+          return;
+        }
+        maxConfirmPending = false;
+        maxBtn.textContent = 'Max';
+        maxBtn.style.color = '';
+        maxBtn.style.padding = '';
+        val = balance;
+      } else {
+        if (maxConfirmPending) {
+          maxConfirmPending = false;
+          maxBtn.textContent = 'Max';
+          maxBtn.style.color = '';
+          maxBtn.style.padding = '';
+        }
+        if (action === 'half') val = val / 2;
+        if (action === 'double') val = val * 2;
+      }
+
+      betInput.value = Math.max(0, Math.min(val, balance)).toFixed(2);
+      updateWinDisplay();
+    });
+  });
+
+  // ── Bet mode toggle ──
+  const autobetPanel = document.getElementById('autobetSettings');
+  const manualPanel = document.getElementById('manualSettings');
+  document.querySelectorAll('.bet-mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.bet-mode-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const isAuto = btn.dataset.mode === 'auto';
+      autobetPanel.style.display = isAuto ? '' : 'none';
+      manualPanel.style.display = isAuto ? 'none' : '';
+      document.getElementById('betBtn').querySelector('.btn-content').textContent = isAuto ? 'Start Autobet' : 'Bet Now';
+    });
+  });
+
+  // ── Autobet number chips ──
+  document.querySelectorAll('.autobet-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const v = chip.dataset.bets;
+      document.getElementById('numBets').value = v === 'Infinity' ? '' : v;
+      if (v === 'Infinity') document.getElementById('numBets').placeholder = '\u221E';
+    });
+  });
+
+  // ── On Win / On Loss segmented toggles ──
+  document.querySelectorAll('.autobet-seg-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const seg = btn.closest('.autobet-seg');
+      seg.querySelectorAll('.autobet-seg-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const target = btn.dataset.target;
+      const pctEl = document.getElementById(target + 'Pct');
+      pctEl.style.display = btn.dataset.action === 'increase' ? '' : 'none';
+    });
+  });
+
+  // ── Init ──
+  function init() {
+    generateBoard();
+    generateBuckets();
+  }
+
+  // Wait for layout then init
+  requestAnimationFrame(() => {
+    requestAnimationFrame(init);
+  });
+
+  // Rebuild on resize
+  window.addEventListener('resize', () => {
+    generateBoard();
+    generateBuckets();
+  });
+</script>
+
+</body>
+</html>
