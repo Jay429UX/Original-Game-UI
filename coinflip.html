@@ -1006,7 +1006,67 @@
     justify-content: space-between;
     padding: 10px 2px 0;
     border-top: 1px solid var(--border);
+    position: relative;
   }
+
+  .settings-popup {
+    display: none;
+    position: absolute;
+    bottom: 52px;
+    left: 0;
+    width: 220px;
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 30;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+  .settings-popup.visible { display: flex; }
+
+  .settings-popup-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+
+  .settings-popup-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .settings-popup-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+
+  .settings-toggle {
+    position: relative;
+    width: 40px;
+    height: 22px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 11px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    border: none;
+    padding: 0;
+  }
+  .settings-toggle.active { background: var(--green-primary); }
+  .settings-toggle::after {
+    content: '';
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 0.2s ease;
+  }
+  .settings-toggle.active::after { transform: translateX(18px); }
 
   .settings-left {
     display: flex;
@@ -1409,6 +1469,17 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </button>
       </div>
+      <div class="settings-popup" id="settingsPopup">
+        <div class="settings-popup-title">Settings</div>
+        <div class="settings-popup-row">
+          <span class="settings-popup-label">Sound</span>
+          <button class="settings-toggle" id="soundToggle"></button>
+        </div>
+        <div class="settings-popup-row">
+          <span class="settings-popup-label">Turbo Mode</span>
+          <button class="settings-toggle" id="turboSettingsToggle"></button>
+        </div>
+      </div>
   </div>
 
   <!-- Bottom Nav -->
@@ -1671,6 +1742,39 @@
       const pctEl = document.getElementById(target + 'Pct');
       pctEl.style.display = btn.dataset.action === 'increase' ? '' : 'none';
     });
+  });
+
+  // ── Turbo & Sound State ──
+  let turboMode = false;
+  let soundEnabled = false;
+
+  // ── Settings Popup ──
+  const settingsPopup = document.getElementById('settingsPopup');
+  const soundToggle = document.getElementById('soundToggle');
+  const turboSettingsToggle = document.getElementById('turboSettingsToggle');
+  const settingsBtnEl = document.getElementById('settingsBtn');
+
+  settingsBtnEl.addEventListener('click', (e) => {
+    e.stopPropagation();
+    settingsPopup.classList.toggle('visible');
+    settingsBtnEl.classList.toggle('active', settingsPopup.classList.contains('visible'));
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!settingsPopup.contains(e.target) && e.target !== settingsBtnEl) {
+      settingsPopup.classList.remove('visible');
+      settingsBtnEl.classList.remove('active');
+    }
+  });
+
+  soundToggle.addEventListener('click', () => {
+    soundEnabled = !soundEnabled;
+    soundToggle.classList.toggle('active', soundEnabled);
+  });
+
+  turboSettingsToggle.addEventListener('click', () => {
+    turboMode = !turboMode;
+    turboSettingsToggle.classList.toggle('active', turboMode);
   });
 
   // ── Init ──

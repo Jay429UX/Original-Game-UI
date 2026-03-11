@@ -890,7 +890,67 @@
     justify-content: space-between;
     padding: 10px 2px 0;
     border-top: 1px solid var(--border);
+    position: relative;
   }
+
+  .settings-popup {
+    display: none;
+    position: absolute;
+    bottom: 52px;
+    left: 0;
+    width: 220px;
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 30;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+  .settings-popup.visible { display: flex; }
+
+  .settings-popup-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+
+  .settings-popup-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .settings-popup-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+
+  .settings-toggle {
+    position: relative;
+    width: 40px;
+    height: 22px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 11px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    border: none;
+    padding: 0;
+  }
+  .settings-toggle.active { background: var(--green-primary); }
+  .settings-toggle::after {
+    content: '';
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 0.2s ease;
+  }
+  .settings-toggle.active::after { transform: translateX(18px); }
 
   .settings-left {
     display: flex;
@@ -1074,6 +1134,37 @@
     to { transform: translateX(0); opacity: 1; }
   }
 
+  /* ── Error Message ── */
+  .bet-error {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    background: rgba(220, 38, 38, 0.1);
+    border: 1px solid rgba(220, 38, 38, 0.3);
+    border-radius: var(--radius-xs);
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #f87171;
+    animation: errorShake 0.3s ease;
+  }
+
+  .bet-error.visible {
+    display: flex;
+  }
+
+  @keyframes errorShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+
+  .input-row.error {
+    border-color: rgba(220, 38, 38, 0.5);
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+  }
+
   /* ── Responsive ── */
   @media (max-width: 380px) {
     .bet-input { font-size: 16px; }
@@ -1178,6 +1269,7 @@
             <button class="quick-btn" data-action="max">Max</button>
           </div>
         </div>
+        <div class="bet-error" id="betError">Bet amount exceeds your balance of $100.00</div>
       </div>
 
       <!-- Bet Mode Toggle -->
@@ -1219,54 +1311,6 @@
           </div>
         </div>
 
-        <!-- On Win -->
-        <div class="autobet-field">
-          <span class="autobet-label">On Win</span>
-          <div class="autobet-toggle-row">
-            <div class="autobet-seg">
-              <button class="autobet-seg-btn active" data-action="reset" data-target="onWin">Reset</button>
-              <button class="autobet-seg-btn" data-action="increase" data-target="onWin">Increase by</button>
-            </div>
-            <div class="autobet-pct" id="onWinPct" style="display:none">
-              <input class="autobet-pct-input" type="number" value="50" min="1" max="500">
-              <span class="autobet-pct-sign">%</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- On Loss -->
-        <div class="autobet-field">
-          <span class="autobet-label">On Loss</span>
-          <div class="autobet-toggle-row">
-            <div class="autobet-seg">
-              <button class="autobet-seg-btn active" data-action="reset" data-target="onLoss">Reset</button>
-              <button class="autobet-seg-btn" data-action="increase" data-target="onLoss">Increase by</button>
-            </div>
-            <div class="autobet-pct" id="onLossPct" style="display:none">
-              <input class="autobet-pct-input" type="number" value="100" min="1" max="500">
-              <span class="autobet-pct-sign">%</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Stop on Profit -->
-        <div class="autobet-field">
-          <span class="autobet-label">Stop on Profit</span>
-          <div class="autobet-stop-row">
-            <div class="currency-tag">$</div>
-            <input class="autobet-input autobet-stop-input" type="number" placeholder="0.00" step="0.01" min="0">
-          </div>
-        </div>
-
-        <!-- Stop on Loss -->
-        <div class="autobet-field">
-          <span class="autobet-label">Stop on Loss</span>
-          <div class="autobet-stop-row">
-            <div class="currency-tag">$</div>
-            <input class="autobet-input autobet-stop-input" type="number" placeholder="0.00" step="0.01" min="0">
-          </div>
-        </div>
-
       </div>
 
       <!-- Settings Bar -->
@@ -1285,6 +1329,17 @@
         <button class="settings-btn" id="fairnessBtn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </button>
+      </div>
+      <div class="settings-popup" id="settingsPopup">
+        <div class="settings-popup-title">Settings</div>
+        <div class="settings-popup-row">
+          <span class="settings-popup-label">Sound</span>
+          <button class="settings-toggle" id="soundToggle"></button>
+        </div>
+        <div class="settings-popup-row">
+          <span class="settings-popup-label">Turbo Mode</span>
+          <button class="settings-toggle" id="turboSettingsToggle"></button>
+        </div>
       </div>
   </div>
 
@@ -1586,10 +1641,102 @@
     setTimeout(() => btn.style.transform = '', 150);
   }
 
-  // ── Bet handler ──
-  document.getElementById('betBtn').addEventListener('click', () => {
-    dropBall();
+  // ── Bet validation ──
+  const betError = document.getElementById('betError');
+  const inputRow = betInput.closest('.input-row');
+
+  function validateBet() {
+    const val = parseFloat(betInput.value) || 0;
+    if (val > balance) {
+      betError.textContent = `Bet amount exceeds your balance of $${balance.toFixed(2)}`;
+      betError.classList.add('visible');
+      inputRow.classList.add('error');
+      return false;
+    }
+    if (val <= 0) {
+      betError.textContent = 'Please enter a bet amount';
+      betError.classList.add('visible');
+      inputRow.classList.add('error');
+      return false;
+    }
+    betError.classList.remove('visible');
+    inputRow.classList.remove('error');
+    return true;
+  }
+
+  function clearError() {
+    const val = parseFloat(betInput.value) || 0;
+    if (val <= balance && val > 0) {
+      betError.classList.remove('visible');
+      inputRow.classList.remove('error');
+    }
+  }
+
+  betInput.addEventListener('input', () => {
+    clearError();
+    updateWinDisplay();
   });
+
+  // ── Autobet state ──
+  let isAutoMode = false;
+  let autobetRunning = false;
+  let autobetTimer = null;
+  let autobetCount = 0;
+  let autobetTarget = 0;
+  const betBtnEl = document.getElementById('betBtn');
+  const btnContent = betBtnEl.querySelector('.btn-content');
+
+  // ── Bet handler ──
+  betBtnEl.addEventListener('click', () => {
+    if (!isAutoMode) {
+      // Manual: validate then drop
+      if (!validateBet()) return;
+      dropBall();
+    } else {
+      // Auto: toggle start/stop
+      if (autobetRunning) {
+        stopAutobet();
+      } else {
+        if (!validateBet()) return;
+        startAutobet();
+      }
+    }
+  });
+
+  function startAutobet() {
+    const numBetsInput = document.getElementById('numBets');
+    const targetBets = parseInt(numBetsInput.value);
+    autobetTarget = isNaN(targetBets) || targetBets <= 0 ? Infinity : targetBets;
+    autobetCount = 0;
+    autobetRunning = true;
+    btnContent.textContent = 'Stop Autobet';
+    betBtnEl.style.background = '#dc2626';
+    runNextAutoBet();
+  }
+
+  function stopAutobet() {
+    autobetRunning = false;
+    if (autobetTimer) {
+      clearTimeout(autobetTimer);
+      autobetTimer = null;
+    }
+    btnContent.textContent = 'Start Autobet';
+    betBtnEl.style.background = '';
+  }
+
+  function runNextAutoBet() {
+    if (!autobetRunning) return;
+    if (autobetCount >= autobetTarget) {
+      stopAutobet();
+      return;
+    }
+    autobetCount++;
+    dropBall();
+
+    // Stagger drops — next ball after a short delay
+    const delay = 250;
+    autobetTimer = setTimeout(runNextAutoBet, delay);
+  }
 
   // ── Rows slider ──
   rowsSlider.addEventListener('input', () => {
@@ -1608,9 +1755,6 @@
       generateBuckets();
     });
   });
-
-  // ── Bet input ──
-  betInput.addEventListener('input', () => updateWinDisplay());
 
   // ── Quick amount buttons ──
   let maxConfirmPending = false;
@@ -1665,10 +1809,16 @@
     btn.addEventListener('click', () => {
       document.querySelectorAll('.bet-mode-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      const isAuto = btn.dataset.mode === 'auto';
-      autobetPanel.style.display = isAuto ? '' : 'none';
-      manualPanel.style.display = isAuto ? 'none' : '';
-      document.getElementById('betBtn').querySelector('.btn-content').textContent = isAuto ? 'Start Autobet' : 'Bet Now';
+      isAutoMode = btn.dataset.mode === 'auto';
+      autobetPanel.style.display = isAutoMode ? '' : 'none';
+      manualPanel.style.display = isAutoMode ? 'none' : '';
+      if (isAutoMode) {
+        btnContent.textContent = 'Start Autobet';
+      } else {
+        if (autobetRunning) stopAutobet();
+        btnContent.textContent = 'Bet Now';
+      }
+      betBtnEl.style.background = '';
     });
   });
 
@@ -1681,17 +1831,6 @@
     });
   });
 
-  // ── On Win / On Loss segmented toggles ──
-  document.querySelectorAll('.autobet-seg-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const seg = btn.closest('.autobet-seg');
-      seg.querySelectorAll('.autobet-seg-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const target = btn.dataset.target;
-      const pctEl = document.getElementById(target + 'Pct');
-      pctEl.style.display = btn.dataset.action === 'increase' ? '' : 'none';
-    });
-  });
 
   // ── Init ──
   function init() {
@@ -1708,6 +1847,39 @@
   window.addEventListener('resize', () => {
     generateBoard();
     generateBuckets();
+  });
+
+  // ── Turbo & Sound State ──
+  let turboMode = false;
+  let soundEnabled = false;
+
+  // ── Settings Popup ──
+  const settingsPopup = document.getElementById('settingsPopup');
+  const soundToggle = document.getElementById('soundToggle');
+  const turboSettingsToggle = document.getElementById('turboSettingsToggle');
+  const settingsBtnEl = document.getElementById('settingsBtn');
+
+  settingsBtnEl.addEventListener('click', (e) => {
+    e.stopPropagation();
+    settingsPopup.classList.toggle('visible');
+    settingsBtnEl.classList.toggle('active', settingsPopup.classList.contains('visible'));
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!settingsPopup.contains(e.target) && e.target !== settingsBtnEl) {
+      settingsPopup.classList.remove('visible');
+      settingsBtnEl.classList.remove('active');
+    }
+  });
+
+  soundToggle.addEventListener('click', () => {
+    soundEnabled = !soundEnabled;
+    soundToggle.classList.toggle('active', soundEnabled);
+  });
+
+  turboSettingsToggle.addEventListener('click', () => {
+    turboMode = !turboMode;
+    turboSettingsToggle.classList.toggle('active', turboMode);
   });
 </script>
 
