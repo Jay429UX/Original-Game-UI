@@ -100,6 +100,26 @@
     gap: 10px;
   }
 
+  .header-casino-link {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--green-primary);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: var(--radius);
+    transition: background 0.15s;
+  }
+  .header-casino-link:hover {
+    background: rgba(0, 171, 76, 0.1);
+  }
+  .header-casino-link svg {
+    width: 16px;
+    height: 16px;
+  }
+
   .balance-pill {
     background: var(--surface-raised);
     border: 1px solid var(--border);
@@ -1093,7 +1113,8 @@
       display: grid;
       grid-template-columns: 360px 1fr;
       grid-template-rows: 1fr auto;
-      height: 780px;
+      height: calc(100vh - 62px);
+      max-height: 780px;
       padding: 0 24px 24px;
       flex: none;
       min-height: 0;
@@ -1153,7 +1174,8 @@
       min-height: 400px;
     }
 
-    .bottom-nav { max-width: 1200px; }
+    .bottom-nav { display: none; }
+    .header-casino-link { display: inline-flex; }
     .game-bottom {
       max-width: 560px;
       padding: 20px 24px;
@@ -1172,6 +1194,10 @@
     <div class="header-brand">
       <img src="assets/Diceylogo.svg" alt="Dicey" height="20">
     </div>
+    <a href="casino.html" class="header-casino-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      Casino
+    </a>
     <div class="header-right">
       <div class="balance-pill">
         <div class="balance-dot"></div>
