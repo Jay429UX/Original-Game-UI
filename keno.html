@@ -234,6 +234,14 @@
     gap: 14px;
     flex-shrink: 0;
   }
+  /* Mobile order for bet controls */
+  .bet-controls .bet-button { order: 1; }
+  .bet-controls .pick-controls { order: 2; }
+  .bet-controls .input-group { order: 3; }
+  .bet-controls .keno-risk-group { order: 4; }
+  .bet-controls .bet-mode-toggle { order: 5; }
+  .bet-controls .manual-settings { order: 6; }
+  .bet-controls .autobet-settings { order: 6; }
 
   /* ── Bet Mode Toggle ── */
   .bet-mode-toggle {
@@ -802,6 +810,19 @@
     width: 100%;
   }
 
+  /* ── Keno Risk Group ── */
+  .keno-risk-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .keno-risk-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.45);
+    letter-spacing: 0.04em;
+  }
+
   /* ── Risk Toggle ── */
   .risk-toggle {
     display: flex;
@@ -815,13 +836,13 @@
 
   .risk-btn {
     flex: 1;
-    padding: 8px 6px;
+    padding: 12px 6px;
     border: none;
     border-radius: var(--radius-xs);
     background: transparent;
     color: rgba(255, 255, 255, 0.4);
     font-family: 'Outfit', sans-serif;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.15s ease;
@@ -844,13 +865,13 @@
 
   .pick-btn {
     flex: 1;
-    padding: 8px 8px;
+    padding: 12px 8px;
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius-xs);
     background: rgba(0, 0, 0, 0.55);
     color: rgba(255, 255, 255, 0.5);
     font-family: 'Outfit', sans-serif;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.15s ease;
@@ -868,13 +889,13 @@
 
   .pick-count-select {
     width: 52px;
-    padding: 8px 4px;
+    padding: 12px 4px;
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius-xs);
     background: rgba(0, 0, 0, 0.55);
     color: rgba(255, 255, 255, 0.5);
     font-family: 'Outfit', sans-serif;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     text-align: center;
@@ -923,6 +944,7 @@
     padding: 10px 2px 0;
     border-top: 1px solid var(--border);
     position: relative;
+    order: 99;
   }
 
   /* ── Desktop Settings Strip (hidden on mobile) ── */
@@ -1235,11 +1257,13 @@
     }
 
     /* Desktop sidebar reorder */
-    .bet-mode-toggle { order: 1; }
-    .input-group { order: 2; }
-    .bet-button { order: 3; }
-    .manual-settings { order: 4; }
-    .autobet-settings { order: 4; }
+    .bet-controls .bet-mode-toggle { order: 1; }
+    .bet-controls .input-group { order: 2; }
+    .bet-controls .keno-risk-group { order: 3; }
+    .bet-controls .pick-controls { order: 4; }
+    .bet-controls .bet-button { order: 5; }
+    .bet-controls .manual-settings { order: 6; }
+    .bet-controls .autobet-settings { order: 6; }
 
     /* Hide original settings bar on desktop */
     .settings-bar { display: none; }
@@ -1279,7 +1303,6 @@
 
     .bottom-nav { display: none; }
     .header-casino-link { display: inline-flex; }
-    .game-bottom { max-width: 480px; }
   }
 </style>
 </head>
@@ -1324,36 +1347,6 @@
         </div>
       </div>
 
-      <!-- Keno Controls -->
-      <div class="game-bottom">
-        <div class="keno-settings">
-          <!-- Risk level toggle -->
-          <div class="risk-toggle">
-            <button class="risk-btn active" data-risk="classic">Classic</button>
-            <button class="risk-btn" data-risk="low">Low</button>
-            <button class="risk-btn" data-risk="medium">Medium</button>
-            <button class="risk-btn" data-risk="high">High</button>
-          </div>
-
-          <!-- Auto Pick / Clear -->
-          <div class="pick-controls">
-            <button class="pick-btn" id="autoPickBtn">Auto Pick</button>
-            <select class="pick-count-select" id="pickCountSelect">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5" selected>5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-              <option value="9">9</option>
-              <option value="10">10</option>
-            </select>
-            <button class="pick-btn" id="clearAllBtn">Clear All</button>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- Bet Controls Wrapper -->
@@ -1395,6 +1388,35 @@
       <div class="bet-mode-toggle">
         <button class="bet-mode-btn active" data-mode="manual">Manual Bet</button>
         <button class="bet-mode-btn" data-mode="auto">Auto Bet</button>
+      </div>
+
+      <!-- Risk Toggle -->
+      <div class="keno-risk-group">
+        <span class="keno-risk-label">Risk</span>
+        <div class="risk-toggle">
+          <button class="risk-btn active" data-risk="classic">Classic</button>
+          <button class="risk-btn" data-risk="low">Low</button>
+          <button class="risk-btn" data-risk="medium">Medium</button>
+          <button class="risk-btn" data-risk="high">High</button>
+        </div>
+      </div>
+
+      <!-- Pick Controls -->
+      <div class="pick-controls">
+        <button class="pick-btn" id="autoPickBtn">Auto Pick</button>
+        <select class="pick-count-select" id="pickCountSelect">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5" selected>5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+        </select>
+        <button class="pick-btn" id="clearAllBtn">Clear All</button>
       </div>
 
       <!-- Manual Bet Settings (visible by default) -->
@@ -2008,7 +2030,6 @@
     const count = parseInt(document.getElementById('pickCountSelect').value);
     autoPick(count);
   });
-
   document.getElementById('clearAllBtn').addEventListener('click', clearAll);
 
   // ── Quick Amount Buttons ──
