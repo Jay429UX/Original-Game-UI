@@ -181,11 +181,16 @@
     background: linear-gradient(160deg, #0a1a0f 0%, #0e2a16 50%, #0a1a0f 100%);
   }
 
-  .game-card-thumb.dice-thumb::after {
+  .game-card-thumb.dice-thumb::after,
+  .game-card-thumb.limbo-thumb::after {
     content: '';
     position: absolute;
     inset: 0;
     background: radial-gradient(circle at 50% 60%, rgba(0, 171, 76, 0.15) 0%, transparent 70%);
+  }
+
+  .game-card-thumb.limbo-thumb {
+    background: linear-gradient(160deg, #0a1a0f 0%, #0e2a16 50%, #0a1a0f 100%);
   }
 
   .game-card-info {
@@ -308,16 +313,16 @@
         </div>
       </a>
 
-      <!-- Coming Soon -->
-      <div class="game-card coming-soon">
+      <!-- Blackjack -->
+      <a href="blackjack.html" class="game-card">
         <div class="game-card-thumb">
           <span class="game-icon">🃏</span>
         </div>
         <div class="game-card-info">
           <span class="game-card-name">Blackjack</span>
-          <span class="game-card-tag">Soon</span>
+          <span class="game-card-tag">Live</span>
         </div>
-      </div>
+      </a>
 
       <div class="game-card coming-soon">
         <div class="game-card-thumb">
@@ -355,6 +360,16 @@
         </div>
         <div class="game-card-info">
           <span class="game-card-name">Keno</span>
+          <span class="game-card-tag">Live</span>
+        </div>
+      </a>
+
+      <a href="limbo.html" class="game-card">
+        <div class="game-card-thumb limbo-thumb">
+          <span class="game-icon">📈</span>
+        </div>
+        <div class="game-card-info">
+          <span class="game-card-name">Limbo</span>
           <span class="game-card-tag">Live</span>
         </div>
       </a>
