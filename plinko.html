@@ -89,7 +89,6 @@
     font-size: 9px;
     font-weight: 500;
     letter-spacing: 0.08em;
-    text-transform: uppercase;
     color: var(--text-secondary);
     display: block;
     margin-top: -2px;
@@ -163,7 +162,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
     gap: 0;
     width: 100%;
     overflow: hidden;
@@ -177,7 +176,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    background: rgba(0, 0, 0, 0.35);
+    background: rgba(0, 0, 0, 0.55);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius);
     padding: 14px 14px 14px;
@@ -200,6 +199,13 @@
     inset: 0;
     background: url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='0.6' fill='rgba(255,255,255,0.03)'/%3E%3C/svg%3E");
     pointer-events: none;
+  }
+
+  /* ── Sidebar Plinko Settings (hidden on mobile) ── */
+  .sidebar-plinko-settings {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
   }
 
   /* ── Bet Controls Wrapper ── */
@@ -320,7 +326,6 @@
     font-size: 11px;
     font-weight: 600;
     color: var(--text-secondary);
-    text-transform: uppercase;
     letter-spacing: 0.04em;
   }
 
@@ -549,7 +554,6 @@
     font-weight: 500;
     color: var(--text-secondary);
     letter-spacing: 0.04em;
-    text-transform: uppercase;
   }
 
   .input-label .potential-win {
@@ -650,7 +654,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
     min-height: 0;
   }
 
@@ -765,7 +769,6 @@
     font-size: 12px;
     font-weight: 600;
     color: rgba(255, 255, 255, 0.45);
-    text-transform: uppercase;
     letter-spacing: 0.04em;
   }
 
@@ -816,9 +819,9 @@
 
   .coin-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
+    width: 12px;
+    height: 28px;
+    border-radius: 6px;
     background: var(--green-primary);
     border: 2px solid #00c956;
     box-shadow: 0 0 0 4px rgba(0, 171, 76, 0.15), 0 2px 6px rgba(0, 0, 0, 0.3);
@@ -840,9 +843,9 @@
   }
 
   .coin-slider::-moz-range-thumb {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
+    width: 12px;
+    height: 28px;
+    border-radius: 6px;
     background: var(--green-primary);
     border: 2px solid #00c956;
     box-shadow: 0 0 0 4px rgba(0, 171, 76, 0.15), 0 2px 6px rgba(0, 0, 0, 0.3);
@@ -852,7 +855,7 @@
   /* ── Risk Toggle ── */
   .risk-toggle {
     display: flex;
-    background: rgba(0, 0, 0, 0.35);
+    background: rgba(0, 0, 0, 0.55);
     border-radius: var(--radius-sm);
     border: 1px solid rgba(255, 255, 255, 0.08);
     overflow: hidden;
@@ -892,6 +895,9 @@
     border-top: 1px solid var(--border);
     position: relative;
   }
+
+  /* ── Desktop Settings Strip (hidden on mobile) ── */
+  .desktop-settings-strip { display: none; }
 
   .settings-popup {
     display: none;
@@ -1170,6 +1176,83 @@
     .bet-input { font-size: 16px; }
     .bucket { font-size: 7px; }
   }
+
+  /* ══ Desktop Layout ══ */
+  @media (min-width: 768px) {
+    .app-shell { max-width: 1200px; }
+    .header { padding: 14px 24px; }
+
+    .main-content {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      grid-template-rows: 1fr auto;
+      height: 780px;
+      padding: 0 24px 24px;
+      flex: none;
+      min-height: 0;
+    }
+
+    .bet-controls {
+      grid-column: 1;
+      grid-row: 1;
+      border-radius: var(--radius) 0 0 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      border-right: none;
+      border-bottom: none;
+      overflow: visible;
+      padding: 20px;
+      gap: 28px;
+    }
+
+    /* Desktop sidebar reorder */
+    .bet-mode-toggle { order: 1; }
+    .input-group { order: 2; }
+    .sidebar-plinko-settings { display: flex; order: 3; }
+    .bet-button { order: 4; }
+    .manual-settings { display: none; }
+    .autobet-settings { order: 5; }
+
+    /* Hide original settings bar on desktop */
+    .settings-bar { display: none; }
+
+    /* Desktop settings strip — full width bottom */
+    .desktop-settings-strip {
+      display: flex;
+      grid-column: 1 / -1;
+      grid-row: 2;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      background: #161816;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 0 0 var(--radius) var(--radius);
+      padding: 12px 20px;
+    }
+    .strip-center-logo {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0.2;
+      pointer-events: none;
+    }
+
+    /* Hide game-bottom from viewport on desktop */
+    .game-bottom { display: none; }
+
+    .game-viewport {
+      grid-column: 2;
+      grid-row: 1;
+      border-radius: 0 var(--radius) 0 0;
+      border-bottom: none;
+      border-left: none;
+      height: auto;
+      min-height: 400px;
+      padding: 12px 16px 0;
+    }
+
+    .bottom-nav { max-width: 1200px; }
+  }
 </style>
 </head>
 <body>
@@ -1179,10 +1262,7 @@
   <!-- Header -->
   <header class="header">
     <div class="header-brand">
-      <div>
-        <span>dicey</span>
-        <small>by Magic Eden</small>
-      </div>
+      <img src="assets/Diceylogo.svg" alt="Dicey" height="20">
     </div>
     <div class="header-right">
       <div class="balance-pill">
@@ -1239,6 +1319,24 @@
 
     <!-- Bet Controls Wrapper -->
     <div class="bet-controls">
+      <!-- Plinko Settings (desktop sidebar version — hidden on mobile) -->
+      <div class="sidebar-plinko-settings">
+        <div class="plinko-setting">
+          <div class="plinko-setting-row">
+            <span class="plinko-setting-label">Rows</span>
+            <span class="plinko-setting-val" id="rowsValDesktop">16</span>
+          </div>
+          <div class="coin-slider-track">
+            <input type="range" class="coin-slider" id="rowsSliderDesktop" min="8" max="16" value="16">
+          </div>
+        </div>
+        <div class="risk-toggle">
+          <button class="risk-btn" data-risk="low">Low Risk</button>
+          <button class="risk-btn active" data-risk="medium">Medium Risk</button>
+          <button class="risk-btn" data-risk="high">High Risk</button>
+        </div>
+      </div>
+
       <!-- Bet Button -->
       <button class="bet-button" id="betBtn">
         <div class="btn-content">
@@ -1341,6 +1439,26 @@
           <button class="settings-toggle" id="turboSettingsToggle"></button>
         </div>
       </div>
+    </div>
+
+    <!-- Desktop Settings Strip (hidden on mobile, full-width on desktop) -->
+    <div class="desktop-settings-strip">
+      <img src="assets/Diceylogo.svg" alt="Dicey" height="20" class="strip-center-logo">
+      <div class="settings-left">
+        <button class="settings-btn" onclick="document.getElementById('settingsPopup').classList.toggle('visible')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+        <button class="settings-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        </button>
+        <button class="settings-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </button>
+      </div>
+      <button class="settings-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </button>
+    </div>
   </div>
 
   <!-- Bottom Nav -->
@@ -1739,18 +1857,28 @@
   }
 
   // ── Rows slider ──
-  rowsSlider.addEventListener('input', () => {
-    currentRows = parseInt(rowsSlider.value);
+  const rowsSliderDesktop = document.getElementById('rowsSliderDesktop');
+  const rowsValDesktop = document.getElementById('rowsValDesktop');
+
+  function syncRows(value) {
+    currentRows = parseInt(value);
     rowsVal.textContent = currentRows;
+    rowsValDesktop.textContent = currentRows;
+    rowsSlider.value = currentRows;
+    rowsSliderDesktop.value = currentRows;
     generateBoard();
     generateBuckets();
-  });
+  }
 
-  // ── Risk toggle ──
+  rowsSlider.addEventListener('input', () => syncRows(rowsSlider.value));
+  rowsSliderDesktop.addEventListener('input', () => syncRows(rowsSliderDesktop.value));
+
+  // ── Risk toggle (both mobile + desktop) ──
   document.querySelectorAll('.risk-btn').forEach(btn => {
     btn.addEventListener('click', () => {
+      // Update ALL risk buttons across both panels
       document.querySelectorAll('.risk-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      document.querySelectorAll(`.risk-btn[data-risk="${btn.dataset.risk}"]`).forEach(b => b.classList.add('active'));
       currentRisk = btn.dataset.risk;
       generateBuckets();
     });

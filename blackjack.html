@@ -82,7 +82,6 @@
     font-size: 9px;
     font-weight: 500;
     letter-spacing: 0.08em;
-    text-transform: uppercase;
     color: var(--text-secondary);
     display: block;
     margin-top: -2px;
@@ -277,7 +276,6 @@
     font-size: 11px;
     font-weight: 600;
     color: rgba(255,255,255,0.45);
-    text-transform: uppercase;
     letter-spacing: 0.06em;
     display: flex;
     align-items: center;
@@ -305,15 +303,15 @@
     display: flex;
     justify-content: center;
     gap: 6px;
-    min-height: 80px;
+    min-height: 100px;
     flex-wrap: wrap;
   }
 
   /* ── Playing Cards ── */
   .card {
-    width: 54px;
-    height: 76px;
-    border-radius: 6px;
+    width: 80px;
+    height: 112px;
+    border-radius: 8px;
     background: #fff;
     border: 1px solid rgba(255,255,255,0.2);
     display: flex;
@@ -338,12 +336,12 @@
   }
 
   .card .card-rank {
-    font-size: 16px;
+    font-size: 24px;
     line-height: 1;
   }
 
   .card .card-suit {
-    font-size: 18px;
+    font-size: 26px;
     line-height: 1;
     margin-top: -2px;
   }
@@ -380,7 +378,6 @@
     font-weight: 700;
     color: rgba(255,255,255,0.2);
     letter-spacing: 0.1em;
-    text-transform: uppercase;
     padding: 2px 0;
   }
 
@@ -445,6 +442,26 @@
     box-shadow: 0 0 0 1px var(--green-primary);
   }
 
+  /* ── Sidebar Actions (desktop only) ── */
+  .sidebar-actions {
+    display: none;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .sidebar-actions .action-btn {
+    padding: 14px 8px;
+    font-size: 13px;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .sidebar-actions .action-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
   /* ── Bet Controls ── */
   .bet-controls {
     background: #161816;
@@ -462,7 +479,21 @@
   .chip-row {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 8px 0;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
     gap: 8px;
+  }
+
+  .bet-amount-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: 0.04em;
   }
 
   .chip {
@@ -486,10 +517,53 @@
   .chip:hover { transform: scale(1.1); }
   .chip:active { transform: scale(0.95); }
 
+  .chip.selected {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 2px var(--green-primary), 0 0 12px rgba(0, 171, 76, 0.4), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.2);
+  }
+
+  .chip.chip-bounce {
+    animation: chipBounce 0.35s ease;
+  }
+
+  @keyframes chipBounce {
+    0% { transform: scale(1); }
+    30% { transform: scale(0.85); }
+    60% { transform: scale(1.15); }
+    80% { transform: scale(0.97); }
+    100% { transform: scale(1); }
+  }
+
+  .chip.selected.chip-bounce {
+    animation: chipBounceSelected 0.35s ease;
+  }
+
+  @keyframes chipBounceSelected {
+    0% { transform: scale(1.1); }
+    30% { transform: scale(0.9); }
+    60% { transform: scale(1.2); }
+    80% { transform: scale(1.05); }
+    100% { transform: scale(1.1); }
+  }
+
   .chip.disabled {
     opacity: 0.3;
     cursor: not-allowed;
     transform: none;
+  }
+
+  /* Reset chip styling */
+  .chip-reset {
+    background: linear-gradient(145deg, #444 0%, #2a2a2a 100%);
+    border-color: rgba(255,255,255,0.2);
+    color: #fff;
+    font-size: 0;
+  }
+
+  .chip-reset svg {
+    width: 18px;
+    height: 18px;
+    stroke: #fff;
   }
 
   .chip-5 {
@@ -674,6 +748,9 @@
     position: relative;
   }
 
+  /* ── Desktop Settings Strip (hidden on mobile) ── */
+  .desktop-settings-strip { display: none; }
+
   .settings-popup {
     display: none;
     position: absolute;
@@ -807,10 +884,80 @@
 
   /* ── Responsive ── */
   @media (max-width: 380px) {
-    .card { width: 46px; height: 66px; }
-    .card .card-rank { font-size: 14px; }
-    .card .card-suit { font-size: 15px; }
+    .card { width: 58px; height: 82px; }
+    .card .card-rank { font-size: 17px; }
+    .card .card-suit { font-size: 19px; }
     .chip { width: 38px; height: 38px; font-size: 10px; }
+  }
+
+  /* ══ Desktop Layout ══ */
+  @media (min-width: 768px) {
+    .app-shell { max-width: 1200px; }
+    .header { padding: 14px 24px; }
+
+    .main-content {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      grid-template-rows: 1fr auto;
+      height: 780px;
+      padding: 0 24px 24px;
+      flex: none;
+      min-height: 0;
+    }
+
+    .bet-controls {
+      grid-column: 1;
+      grid-row: 1;
+      border-radius: var(--radius) 0 0 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      border-right: none;
+      border-bottom: none;
+      overflow: visible;
+      padding: 20px;
+      gap: 18px;
+    }
+
+    /* Hide original settings bar on desktop */
+    .settings-bar { display: none; }
+
+    /* Show sidebar actions, hide viewport actions on desktop */
+    .sidebar-actions { display: grid; }
+    .game-bottom { display: none; }
+
+    /* Desktop settings strip — full width bottom */
+    .desktop-settings-strip {
+      display: flex;
+      grid-column: 1 / -1;
+      grid-row: 2;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      background: #161816;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 0 0 var(--radius) var(--radius);
+      padding: 12px 20px;
+    }
+    .strip-center-logo {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0.2;
+      pointer-events: none;
+    }
+
+    .game-viewport {
+      grid-column: 2;
+      grid-row: 1;
+      border-radius: 0 var(--radius) 0 0;
+      border-bottom: none;
+      border-left: none;
+      height: auto;
+      min-height: 400px;
+    }
+
+    .bottom-nav { max-width: 1200px; }
+    .game-bottom { max-width: 480px; }
   }
 </style>
 </head>
@@ -821,10 +968,7 @@
   <!-- Header -->
   <header class="header">
     <div class="header-brand">
-      <div>
-        <span>dicey</span>
-        <small>by Magic Eden</small>
-      </div>
+      <img src="assets/Diceylogo.svg" alt="Dicey" height="20">
     </div>
     <div class="header-right">
       <div class="balance-pill">
@@ -887,13 +1031,9 @@
 
     <!-- Bet Controls -->
     <div class="bet-controls">
-      <!-- Chip Selector + Bet Display -->
-      <div class="chip-row">
-        <div class="chip chip-5" data-value="5">5</div>
-        <div class="chip chip-10" data-value="10">10</div>
-        <div class="chip chip-20" data-value="20">20</div>
-        <div class="chip chip-100" data-value="100">100</div>
-        <div class="chip chip-200" data-value="200">200</div>
+      <!-- Bet Amount Group -->
+      <div class="input-group">
+        <div class="bet-amount-label">Bet Amount</div>
         <div class="bet-display">
           <div class="bet-display-row">
             <div class="bet-icon">
@@ -907,6 +1047,13 @@
             </div>
           </div>
         </div>
+        <div class="chip-row">
+          <div class="chip chip-5" data-value="5">5</div>
+          <div class="chip chip-10" data-value="10">10</div>
+          <div class="chip chip-20" data-value="20">20</div>
+          <div class="chip chip-100" data-value="100">100</div>
+          <div class="chip chip-reset" data-action="reset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 1 3 6.7"/><polyline points="3 22 3 16 9 16"/></svg></div>
+        </div>
       </div>
 
       <!-- Place Bet Button -->
@@ -914,14 +1061,37 @@
         <div class="btn-content">Place Bet</div>
       </button>
 
+      <!-- Sidebar Actions (desktop only) -->
+      <div class="sidebar-actions">
+        <button class="action-btn" id="hitBtn2" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01"/></svg>
+          Hit
+        </button>
+        <button class="action-btn" id="standBtn2" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><rect x="8" y="8" width="8" height="8" rx="1"/></svg>
+          Stand
+        </button>
+        <button class="action-btn" id="doubleBtn2" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="10" height="14" rx="1"/><rect x="12" y="4" width="10" height="14" rx="1"/></svg>
+          Double
+        </button>
+        <button class="action-btn" id="splitBtn2" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22V8"/><path d="M21 3l-9 9"/><path d="M3 3l9 9"/></svg>
+          Split
+        </button>
+      </div>
+
       <!-- Settings Bar -->
       <div class="settings-bar">
         <div class="settings-left">
           <button class="settings-btn" id="settingsBtn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           </button>
           <button class="settings-btn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          </button>
+          <button class="settings-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
           </button>
         </div>
         <button class="settings-btn">
@@ -941,6 +1111,28 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Desktop Settings Strip (hidden on mobile, full-width on desktop) -->
+    <div class="desktop-settings-strip">
+      <img src="assets/Diceylogo.svg" alt="Dicey" height="20" class="strip-center-logo">
+      <div class="settings-left">
+        <button class="settings-btn" onclick="document.getElementById('settingsPopup').classList.toggle('visible')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+        <button class="settings-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        </button>
+        <button class="settings-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </button>
+        <button class="settings-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M8 16h8"/></svg>
+        </button>
+      </div>
+      <button class="settings-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </button>
     </div>
   </div>
 
@@ -988,6 +1180,36 @@ const hitBtn = document.getElementById('hitBtn');
 const standBtn = document.getElementById('standBtn');
 const doubleBtn = document.getElementById('doubleBtn');
 const splitBtn = document.getElementById('splitBtn');
+
+// Sidebar action button mirrors (desktop)
+const hitBtn2 = document.getElementById('hitBtn2');
+const standBtn2 = document.getElementById('standBtn2');
+const doubleBtn2 = document.getElementById('doubleBtn2');
+const splitBtn2 = document.getElementById('splitBtn2');
+
+// Sync sidebar buttons with originals
+function syncActionButtons() {
+  [['hitBtn','hitBtn2'],['standBtn','standBtn2'],['doubleBtn','doubleBtn2'],['splitBtn','splitBtn2']].forEach(([a,b]) => {
+    const orig = document.getElementById(a);
+    const mirror = document.getElementById(b);
+    if (orig && mirror) {
+      mirror.disabled = orig.disabled;
+      mirror.className = orig.className;
+    }
+  });
+}
+
+// Wire sidebar buttons to trigger original button clicks
+hitBtn2.addEventListener('click', () => hitBtn.click());
+standBtn2.addEventListener('click', () => standBtn.click());
+doubleBtn2.addEventListener('click', () => doubleBtn.click());
+splitBtn2.addEventListener('click', () => splitBtn.click());
+
+// Observe changes to original buttons
+const actionObserver = new MutationObserver(syncActionButtons);
+[hitBtn, standBtn, doubleBtn, splitBtn].forEach(btn => {
+  actionObserver.observe(btn, { attributes: true, attributeFilter: ['disabled', 'class'] });
+});
 const dealerCardsEl = document.getElementById('dealerCards');
 const playerCardsEl = document.getElementById('playerCards');
 const dealerScoreEl = document.getElementById('dealerScore');
@@ -1105,7 +1327,7 @@ function updateBalance(amount) {
 }
 
 function updateChipStates() {
-  document.querySelectorAll('.chip').forEach(chip => {
+  document.querySelectorAll('.chip[data-value]').forEach(chip => {
     const val = parseInt(chip.dataset.value);
     if (val > currentBalance || gameActive) {
       chip.classList.add('disabled');
@@ -1113,6 +1335,12 @@ function updateChipStates() {
       chip.classList.remove('disabled');
     }
   });
+  // Disable reset chip during game
+  const resetChip = document.querySelector('.chip-reset');
+  if (resetChip) {
+    if (gameActive) resetChip.classList.add('disabled');
+    else resetChip.classList.remove('disabled');
+  }
 }
 
 // ── Result Pills ──
@@ -1416,15 +1644,44 @@ function endRound() {
 }
 
 // ── Chip Clicks ──
-document.querySelectorAll('.chip').forEach(chip => {
+let selectedChip = null;
+
+document.querySelectorAll('.chip[data-value]').forEach(chip => {
   chip.addEventListener('click', () => {
     if (gameActive) return;
     const val = parseInt(chip.dataset.value);
     if (val > currentBalance) return;
+
+    // Set selected state
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+    chip.classList.add('selected');
+    selectedChip = chip;
+
+    // Bounce animation
+    chip.classList.remove('chip-bounce');
+    void chip.offsetWidth; // force reflow
+    chip.classList.add('chip-bounce');
+
+    // Add to bet
     const cur = parseFloat(betAmountInput.value) || 0;
     const newBet = Math.min(cur + val, currentBalance);
     betAmountInput.value = Math.floor(newBet);
   });
+});
+
+// Reset chip
+document.querySelector('.chip-reset')?.addEventListener('click', () => {
+  if (gameActive) return;
+  betAmountInput.value = 0;
+  // Clear selection
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+  selectedChip = null;
+
+  // Bounce the reset chip
+  const resetChip = document.querySelector('.chip-reset');
+  resetChip.classList.remove('chip-bounce');
+  void resetChip.offsetWidth;
+  resetChip.classList.add('chip-bounce');
 });
 
 // ── Quick Buttons ──

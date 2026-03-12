@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Dicey — Keno</title>
+<title>Dicey — Limbo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -145,14 +145,14 @@
     border-radius: var(--radius) var(--radius) 0 0;
     overflow: hidden;
     position: relative;
-    background: #0a0b0a;
+    background: linear-gradient(165deg, var(--green-gradient-start) 0%, #0f2d14 30%, var(--green-gradient-end) 100%);
     border: 1px solid var(--border);
     border-bottom: none;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0;
-    padding: 12px 8px 0;
+    gap: 14px;
+    padding: 24px 20px 20px;
     height: calc(100dvh - 50px - 70px - 48px - 110px - 32px);
     min-height: 200px;
   }
@@ -163,27 +163,23 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0;
+    gap: 10px;
     width: 100%;
-    overflow: hidden;
   }
 
   .game-bottom {
     position: relative;
     z-index: 1;
     width: 100%;
-    max-width: 380px;
+    max-width: 340px;
     display: flex;
     flex-direction: column;
     gap: 12px;
     background: rgba(0, 0, 0, 0.55);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius);
-    padding: 14px 14px 14px;
+    padding: 16px;
     backdrop-filter: blur(12px);
-    margin-top: 10px;
-    margin-bottom: 12px;
-    flex-shrink: 0;
   }
 
   .game-viewport::before {
@@ -200,6 +196,196 @@
     inset: 0;
     background: url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='0.6' fill='rgba(255,255,255,0.03)'/%3E%3C/svg%3E");
     pointer-events: none;
+  }
+
+  /* ── Limbo Result Display ── */
+  .limbo-result-display {
+    position: relative;
+    z-index: 1;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 56px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.9);
+    text-align: center;
+    transition: color 0.3s ease;
+    min-height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .limbo-result-display.win { color: #00e65a; }
+  .limbo-result-display.loss { color: #f87171; }
+  .limbo-result-display.animating { color: rgba(255,255,255,0.9); }
+
+  .limbo-target-label {
+    position: relative;
+    z-index: 1;
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.06em;
+  }
+
+  /* ── Probability/Multiplier Control ── */
+  .limbo-control-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .limbo-control-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .limbo-swap-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.5);
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--radius-xs);
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+
+  .limbo-swap-btn:hover {
+    color: rgba(255,255,255,0.8);
+    background: rgba(255,255,255,0.04);
+  }
+
+  .limbo-swap-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .limbo-control-input-row {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius-xs);
+    padding: 10px 14px;
+    gap: 4px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .limbo-control-input-row:focus-within {
+    border-color: var(--green-primary);
+    box-shadow: 0 0 0 3px rgba(0, 171, 76, 0.15);
+  }
+
+  .limbo-control-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    caret-color: var(--green-primary);
+    -moz-appearance: textfield;
+  }
+
+  .limbo-control-input::-webkit-outer-spin-button,
+  .limbo-control-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .limbo-control-suffix {
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.4);
+  }
+
+  /* ── Slider ── */
+  .slider-container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .slider-track-wrapper {
+    position: relative;
+    height: 36px;
+    display: flex;
+    align-items: center;
+  }
+
+  .slider-track {
+    position: absolute;
+    width: 100%;
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+    overflow: visible;
+  }
+
+  .slider-fill {
+    position: absolute;
+    height: 100%;
+    background: var(--green-primary);
+    border-radius: 3px;
+    transition: width 0.05s ease;
+  }
+
+  .slider-range {
+    -webkit-appearance: none;
+    appearance: none;
+    position: absolute;
+    width: 100%;
+    height: 36px;
+    background: transparent;
+    pointer-events: none;
+    margin: 0;
+    outline: none;
+  }
+
+  .slider-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 28px;
+    border-radius: 6px;
+    background: #fff;
+    border: 2px solid var(--green-primary);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    cursor: pointer;
+    pointer-events: all;
+    position: relative;
+    z-index: 2;
+  }
+
+  .slider-range::-moz-range-thumb {
+    width: 12px;
+    height: 28px;
+    border-radius: 6px;
+    background: #fff;
+    border: 2px solid var(--green-primary);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    cursor: pointer;
+    pointer-events: all;
+  }
+
+  .slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Outfit', sans-serif;
+    font-size: 9px;
+    color: rgba(255,255,255,0.3);
+    margin-top: -4px;
   }
 
   /* ── Bet Controls Wrapper ── */
@@ -466,56 +652,6 @@
     border-radius: 0 !important;
   }
 
-  /* ── Turbo Toggle ── */
-  .turbo-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 14px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-xs);
-  }
-
-  .turbo-label {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    letter-spacing: 0.04em;
-  }
-
-  .turbo-toggle {
-    position: relative;
-    width: 40px;
-    height: 22px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 11px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-    border: none;
-    padding: 0;
-  }
-
-  .turbo-toggle.active {
-    background: var(--green-primary);
-  }
-
-  .turbo-toggle::after {
-    content: '';
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: #fff;
-    transition: transform 0.2s ease;
-  }
-
-  .turbo-toggle.active::after {
-    transform: translateX(18px);
-  }
-
   /* ── Bet Button ── */
   .bet-button {
     width: 100%;
@@ -689,212 +825,6 @@
     background: rgba(0, 171, 76, 0.1);
   }
 
-  /* ── Keno Board ── */
-  .keno-container {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 0;
-  }
-
-  .keno-board {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    gap: 6px;
-    width: 100%;
-    max-width: 380px;
-  }
-
-  .keno-tile {
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
-    border: 1.5px solid var(--border);
-    background: var(--surface);
-    font-family: 'Outfit', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: all 0.15s ease;
-    user-select: none;
-    position: relative;
-  }
-
-  .keno-tile:hover:not(.locked) {
-    border-color: rgba(255, 255, 255, 0.2);
-    color: var(--text-primary);
-  }
-
-  .keno-tile:active:not(.locked) {
-    transform: scale(0.93);
-  }
-
-  .keno-tile.selected {
-    background: rgba(0, 171, 76, 0.15);
-    border-color: var(--green-primary);
-    color: #fff;
-    box-shadow: 0 0 0 1px rgba(0, 171, 76, 0.3);
-  }
-
-  .keno-tile.hit {
-    background: var(--green-primary);
-    border-color: var(--green-primary);
-    color: #fff;
-    box-shadow: 0 0 12px rgba(0, 171, 76, 0.5);
-    animation: tileHit 0.4s ease;
-  }
-
-  .keno-tile.drawn {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.15);
-    color: rgba(255, 255, 255, 0.5);
-  }
-
-  .keno-tile.missed {
-    background: rgba(220, 38, 38, 0.15);
-    border-color: rgba(220, 38, 38, 0.4);
-    color: #f87171;
-  }
-
-  .keno-tile.locked {
-    cursor: default;
-  }
-
-  @keyframes tileHit {
-    0% { transform: scale(1); }
-    40% { transform: scale(1.15); }
-    100% { transform: scale(1); }
-  }
-
-  /* ── Keno Settings ── */
-  .keno-settings {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-  }
-
-  /* ── Risk Toggle ── */
-  .risk-toggle {
-    display: flex;
-    background: rgba(0, 0, 0, 0.55);
-    border-radius: var(--radius-sm);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    overflow: hidden;
-    padding: 3px;
-    gap: 3px;
-  }
-
-  .risk-btn {
-    flex: 1;
-    padding: 8px 6px;
-    border: none;
-    border-radius: var(--radius-xs);
-    background: transparent;
-    color: rgba(255, 255, 255, 0.4);
-    font-family: 'Outfit', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s ease;
-  }
-
-  .risk-btn.active {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-  }
-
-  .risk-btn:hover:not(.active) {
-    color: rgba(255, 255, 255, 0.6);
-  }
-
-  /* ── Pick Controls ── */
-  .pick-controls {
-    display: flex;
-    gap: 6px;
-  }
-
-  .pick-btn {
-    flex: 1;
-    padding: 8px 8px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: var(--radius-xs);
-    background: rgba(0, 0, 0, 0.55);
-    color: rgba(255, 255, 255, 0.5);
-    font-family: 'Outfit', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    text-align: center;
-  }
-
-  .pick-btn:hover {
-    color: rgba(255, 255, 255, 0.8);
-    border-color: rgba(255, 255, 255, 0.15);
-  }
-
-  .pick-btn:active {
-    transform: scale(0.96);
-  }
-
-  .pick-count-select {
-    width: 52px;
-    padding: 8px 4px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: var(--radius-xs);
-    background: rgba(0, 0, 0, 0.55);
-    color: rgba(255, 255, 255, 0.5);
-    font-family: 'Outfit', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
-    text-align: center;
-    -webkit-appearance: none;
-    appearance: none;
-  }
-
-  .pick-count-select option {
-    background: var(--surface);
-    color: var(--text-primary);
-  }
-
-  /* ── Hits Counter (shown during draw) ── */
-  .hits-counter {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 6px 14px;
-    background: rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 100px;
-    font-family: 'Outfit', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-primary);
-    backdrop-filter: blur(8px);
-    margin-top: 8px;
-    flex-shrink: 0;
-  }
-
-  .hits-counter.visible {
-    display: flex;
-  }
-
-  .hits-counter .hit-count {
-    color: var(--green-primary);
-    font-weight: 700;
-  }
-
   /* ── Settings Bar ── */
   .settings-bar {
     display: flex;
@@ -1003,21 +933,6 @@
 
   .settings-btn.active {
     color: var(--green-primary);
-  }
-
-  .settings-label {
-    font-family: 'Outfit', sans-serif;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    white-space: nowrap;
-  }
-
-  .settings-divider {
-    width: 1px;
-    height: 18px;
-    background: var(--border);
-    flex-shrink: 0;
   }
 
   /* ── Bottom Nav ── */
@@ -1149,41 +1064,10 @@
     to { transform: translateX(0); opacity: 1; }
   }
 
-  /* ── Error Message ── */
-  .bet-error {
-    display: none;
-    align-items: center;
-    gap: 6px;
-    padding: 10px 14px;
-    background: rgba(220, 38, 38, 0.1);
-    border: 1px solid rgba(220, 38, 38, 0.3);
-    border-radius: var(--radius-xs);
-    font-family: 'Outfit', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    color: #f87171;
-    animation: errorShake 0.3s ease;
-  }
-
-  .bet-error.visible {
-    display: flex;
-  }
-
-  @keyframes errorShake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-4px); }
-    75% { transform: translateX(4px); }
-  }
-
-  .input-row.error {
-    border-color: rgba(220, 38, 38, 0.5);
-    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
-  }
-
   /* ── Responsive ── */
   @media (max-width: 380px) {
+    .limbo-result-display { font-size: 44px; }
     .bet-input { font-size: 16px; }
-    .keno-tile { font-size: 11px; }
   }
 
   /* ══ Desktop Layout ══ */
@@ -1253,7 +1137,6 @@
       border-left: none;
       height: auto;
       min-height: 400px;
-      padding: 12px 16px 0;
     }
 
     .bottom-nav { max-width: 1200px; }
@@ -1275,7 +1158,7 @@
         <div class="balance-dot"></div>
         $100.00
       </div>
-      <div class="avatar">🎲</div>
+      <div class="avatar">📈</div>
     </div>
   </header>
 
@@ -1290,41 +1173,35 @@
         </div>
       </div>
       <div class="game-content">
-        <div class="keno-container">
-          <div class="keno-board" id="kenoBoard"></div>
-          <div class="hits-counter" id="hitsCounter">
-            Hits: <span class="hit-count" id="hitCount">0</span> / <span id="pickCount">0</span>
-          </div>
-        </div>
+        <div class="limbo-target-label" id="targetLabel">Target: 2.00x</div>
+        <div class="limbo-result-display" id="limboResult">1.00x</div>
       </div>
 
-      <!-- Keno Controls -->
+      <!-- Probability/Multiplier Control -->
       <div class="game-bottom">
-        <div class="keno-settings">
-          <!-- Risk level toggle -->
-          <div class="risk-toggle">
-            <button class="risk-btn active" data-risk="classic">Classic</button>
-            <button class="risk-btn" data-risk="low">Low</button>
-            <button class="risk-btn" data-risk="medium">Medium</button>
-            <button class="risk-btn" data-risk="high">High</button>
+        <div class="limbo-control-header">
+          <span class="limbo-control-label" id="controlLabel">Probability</span>
+          <button class="limbo-swap-btn" id="swapBtn">
+            <span id="swapText">Multiplier: <span id="swapValue">2.00</span>x</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+          </button>
+        </div>
+        <div class="limbo-control-input-row">
+          <input type="number" class="limbo-control-input" id="controlInput" value="49.5000" step="0.0001">
+          <span class="limbo-control-suffix" id="controlSuffix">%</span>
+        </div>
+        <div class="slider-container">
+          <div class="slider-track-wrapper">
+            <div class="slider-track">
+              <div class="slider-fill" id="sliderFill"></div>
+            </div>
+            <input type="range" class="slider-range" id="limboSlider" min="0" max="10000" value="5000">
           </div>
-
-          <!-- Auto Pick / Clear -->
-          <div class="pick-controls">
-            <button class="pick-btn" id="autoPickBtn">Auto Pick</button>
-            <select class="pick-count-select" id="pickCountSelect">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5" selected>5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-              <option value="9">9</option>
-              <option value="10">10</option>
-            </select>
-            <button class="pick-btn" id="clearAllBtn">Clear All</button>
+          <div class="slider-labels">
+            <span>1.01x</span>
+            <span>10x</span>
+            <span>100x</span>
+            <span>1000x</span>
           </div>
         </div>
       </div>
@@ -1343,7 +1220,7 @@
       <div class="input-group">
         <div class="input-label">
           <span>Bet Amount</span>
-          <span class="potential-win" id="potentialWin">Select tiles to play</span>
+          <span class="potential-win" id="potentialWin">Win: $0.00 (2.00x)</span>
         </div>
         <div class="input-row">
           <div class="currency-tag">$</div>
@@ -1362,7 +1239,6 @@
             <button class="quick-btn" data-action="max">Max</button>
           </div>
         </div>
-        <div class="bet-error" id="betError">Bet amount exceeds your balance of $100.00</div>
       </div>
 
       <!-- Bet Mode Toggle -->
@@ -1371,24 +1247,25 @@
         <button class="bet-mode-btn" data-mode="auto">Auto Bet</button>
       </div>
 
-      <!-- Manual Bet Settings (visible by default) -->
+      <!-- Manual Bet Settings -->
       <div class="manual-settings" id="manualSettings">
         <div class="stat-row">
-          <span class="stat-label">Max Multiplier</span>
+          <span class="stat-label">Multiplier</span>
           <div class="stat-value-wrap">
-            <input class="stat-input" type="text" id="multInput" readonly value="—">
+            <input class="stat-input" type="number" id="multInput" step="0.01" min="1.01">
             <span class="stat-suffix">x</span>
           </div>
         </div>
         <div class="stat-row">
-          <span class="stat-label">Tiles Selected</span>
+          <span class="stat-label">Win Probability</span>
           <div class="stat-value-wrap">
-            <input class="stat-input" type="text" id="tilesInput" readonly value="0">
+            <input class="stat-input" type="number" id="winProbInput" step="0.1" min="0.01" max="98.02">
+            <span class="stat-suffix">%</span>
           </div>
         </div>
       </div>
 
-      <!-- Auto Bet Settings (hidden by default) -->
+      <!-- Auto Bet Settings -->
       <div class="autobet-settings" id="autobetSettings" style="display:none">
 
         <!-- Number of Bets -->
@@ -1399,7 +1276,7 @@
             <div class="autobet-chips">
               <button class="autobet-chip" data-bets="10">10</button>
               <button class="autobet-chip" data-bets="100">100</button>
-              <button class="autobet-chip" data-bets="Infinity">&#8734;</button>
+              <button class="autobet-chip" data-bets="Infinity">∞</button>
             </div>
           </div>
         </div>
@@ -1413,7 +1290,7 @@
               <button class="autobet-seg-btn" data-action="increase" data-target="onWin">Increase by</button>
             </div>
             <div class="autobet-pct" id="onWinPct" style="display:none">
-              <input class="autobet-pct-input" type="number" value="50" min="1" max="500" id="onWinPctInput">
+              <input class="autobet-pct-input" type="number" value="50" min="1" max="500">
               <span class="autobet-pct-sign">%</span>
             </div>
           </div>
@@ -1428,7 +1305,7 @@
               <button class="autobet-seg-btn" data-action="increase" data-target="onLoss">Increase by</button>
             </div>
             <div class="autobet-pct" id="onLossPct" style="display:none">
-              <input class="autobet-pct-input" type="number" value="100" min="1" max="500" id="onLossPctInput">
+              <input class="autobet-pct-input" type="number" value="100" min="1" max="500">
               <span class="autobet-pct-sign">%</span>
             </div>
           </div>
@@ -1439,7 +1316,7 @@
           <span class="autobet-label">Stop on Profit</span>
           <div class="autobet-stop-row">
             <div class="currency-tag">$</div>
-            <input class="autobet-input autobet-stop-input" type="number" placeholder="0.00" step="0.01" min="0" id="stopProfit">
+            <input class="autobet-input autobet-stop-input" type="number" placeholder="0.00" step="0.01" min="0">
           </div>
         </div>
 
@@ -1448,14 +1325,8 @@
           <span class="autobet-label">Stop on Loss</span>
           <div class="autobet-stop-row">
             <div class="currency-tag">$</div>
-            <input class="autobet-input autobet-stop-input" type="number" placeholder="0.00" step="0.01" min="0" id="stopLoss">
+            <input class="autobet-input autobet-stop-input" type="number" placeholder="0.00" step="0.01" min="0">
           </div>
-        </div>
-
-        <!-- Turbo -->
-        <div class="turbo-row">
-          <span class="turbo-label">Turbo</span>
-          <button class="turbo-toggle" id="turboToggle"></button>
         </div>
 
       </div>
@@ -1529,461 +1400,176 @@
 </div>
 
 <script>
-  // ── DOM Elements ──
+  // ── State ──
   const betInput = document.getElementById('betAmount');
   const potentialWin = document.getElementById('potentialWin');
   const multInput = document.getElementById('multInput');
-  const tilesInput = document.getElementById('tilesInput');
+  const winProbInput = document.getElementById('winProbInput');
+  const limboResult = document.getElementById('limboResult');
+  const targetLabelEl = document.getElementById('targetLabel');
+  const controlInput = document.getElementById('controlInput');
+  const controlLabel = document.getElementById('controlLabel');
+  const controlSuffix = document.getElementById('controlSuffix');
+  const swapBtn = document.getElementById('swapBtn');
+  const swapText = document.getElementById('swapText');
+  const swapValue = document.getElementById('swapValue');
+  const limboSlider = document.getElementById('limboSlider');
+  const sliderFill = document.getElementById('sliderFill');
   const resultTrack = document.getElementById('resultTrack');
-  const kenoBoard = document.getElementById('kenoBoard');
-  const hitsCounter = document.getElementById('hitsCounter');
-  const hitCountEl = document.getElementById('hitCount');
-  const pickCountEl = document.getElementById('pickCount');
+  const betBtn = document.getElementById('betBtn');
 
-  // ── Game State ──
-  const TOTAL_TILES = 40;
-  const DRAW_COUNT = 10;
-  const MAX_PICKS = 10;
-  const balance = 100;
-  let currentRisk = 'classic';
-  let selectedTiles = new Set();
-  let isDrawing = false;
+  let balance = 100;
+  let targetMultiplier = 2.00;
+  let controlMode = 'probability'; // 'probability' or 'multiplier'
   let turboMode = false;
+  let soundEnabled = false;
+  let isAnimating = false;
 
-  // ── Multiplier Tables ──
-  // payoutTables[risk][numPicks][numHits]
-  const payoutTables = {
-    classic: {
-      1: [0, 3.96],
-      2: [0, 1.8, 5.1],
-      3: [0, 0, 2.8, 25],
-      4: [0, 0, 1.5, 8, 60],
-      5: [0, 0, 1, 3, 14, 200],
-      6: [0, 0, 0.5, 2, 6, 50, 500],
-      7: [0, 0, 0, 1.5, 4, 12, 100, 1500],
-      8: [0, 0, 0, 1, 3, 8, 25, 200, 5000],
-      9: [0, 0, 0, 0.5, 2, 5, 15, 50, 500, 15000],
-      10: [0, 0, 0, 0, 1.5, 3, 10, 30, 200, 1000, 50000]
-    },
-    low: {
-      1: [0, 2.85],
-      2: [0, 1.5, 4],
-      3: [0, 1, 2, 14],
-      4: [0, 0.5, 1.5, 5, 30],
-      5: [0, 0.5, 1, 2.5, 8, 80],
-      6: [0, 0.5, 0.8, 1.5, 4, 20, 200],
-      7: [0, 0, 0.5, 1.2, 3, 8, 40, 400],
-      8: [0, 0, 0.5, 1, 2, 5, 15, 80, 1000],
-      9: [0, 0, 0, 0.8, 1.5, 3, 8, 25, 100, 2500],
-      10: [0, 0, 0, 0.5, 1.2, 2, 5, 15, 50, 250, 5000]
-    },
-    medium: {
-      1: [0, 3.96],
-      2: [0, 1.8, 6],
-      3: [0, 0, 3, 40],
-      4: [0, 0, 1.5, 10, 100],
-      5: [0, 0, 0.8, 4, 20, 400],
-      6: [0, 0, 0, 2, 8, 80, 1500],
-      7: [0, 0, 0, 1, 5, 20, 200, 5000],
-      8: [0, 0, 0, 0.5, 3, 10, 50, 500, 20000],
-      9: [0, 0, 0, 0, 2, 6, 20, 100, 2000, 75000],
-      10: [0, 0, 0, 0, 1, 4, 12, 60, 500, 5000, 250000]
-    },
-    high: {
-      1: [0, 3.96],
-      2: [0, 0, 14],
-      3: [0, 0, 0, 90],
-      4: [0, 0, 0, 4, 400],
-      5: [0, 0, 0, 0, 20, 1200],
-      6: [0, 0, 0, 0, 4, 100, 5000],
-      7: [0, 0, 0, 0, 2, 15, 300, 15000],
-      8: [0, 0, 0, 0, 0, 8, 60, 1500, 50000],
-      9: [0, 0, 0, 0, 0, 4, 20, 200, 5000, 200000],
-      10: [0, 0, 0, 0, 0, 2, 10, 80, 1000, 20000, 1000000]
-    }
-  };
-
-  // ── Generate Board ──
-  function generateBoard() {
-    kenoBoard.innerHTML = '';
-    for (let i = 1; i <= TOTAL_TILES; i++) {
-      const tile = document.createElement('div');
-      tile.className = 'keno-tile';
-      tile.textContent = i;
-      tile.dataset.number = i;
-      tile.addEventListener('click', () => toggleTile(i, tile));
-      kenoBoard.appendChild(tile);
-    }
-  }
-
-  // ── Toggle Tile Selection ──
-  function toggleTile(num, tile) {
-    if (isDrawing) return;
-
-    if (selectedTiles.has(num)) {
-      selectedTiles.delete(num);
-      tile.classList.remove('selected');
-    } else {
-      if (selectedTiles.size >= MAX_PICKS) return; // Max 10
-      selectedTiles.add(num);
-      tile.classList.add('selected');
-    }
-    updateDisplay();
-  }
-
-  // ── Auto Pick ──
-  function autoPick(count) {
-    if (isDrawing) return;
-    clearAll();
-    const available = [];
-    for (let i = 1; i <= TOTAL_TILES; i++) available.push(i);
-
-    // Fisher-Yates shuffle
-    for (let i = available.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [available[i], available[j]] = [available[j], available[i]];
-    }
-
-    const picks = available.slice(0, Math.min(count, MAX_PICKS));
-    const tiles = kenoBoard.querySelectorAll('.keno-tile');
-    picks.forEach(num => {
-      selectedTiles.add(num);
-      tiles[num - 1].classList.add('selected');
-    });
-    updateDisplay();
-  }
-
-  // ── Clear All ──
-  function clearAll() {
-    if (isDrawing) return;
-    selectedTiles.clear();
-    kenoBoard.querySelectorAll('.keno-tile').forEach(t => {
-      t.classList.remove('selected', 'hit', 'drawn', 'missed', 'locked');
-    });
-    hitsCounter.classList.remove('visible');
-    updateDisplay();
-  }
-
-  // ── Update Display ──
-  function updateDisplay() {
-    const count = selectedTiles.size;
-    tilesInput.value = count;
-    pickCountEl.textContent = count;
-
-    if (count === 0) {
-      multInput.value = '—';
-      potentialWin.textContent = 'Select tiles to play';
-      return;
-    }
-
-    const table = payoutTables[currentRisk][count];
-    const maxMult = table ? Math.max(...table) : 0;
-    multInput.value = maxMult >= 1000 ? maxMult.toLocaleString() : maxMult;
-
-    const val = parseFloat(betInput.value) || 0;
-    const maxWin = (val * maxMult).toFixed(2);
-    potentialWin.textContent = `Max: $${maxWin} (${maxMult >= 1000 ? maxMult.toLocaleString() : maxMult}x)`;
-  }
-
-  // ── Play Round ──
-  function playRound() {
-    if (isDrawing) return;
-    if (selectedTiles.size === 0) {
-      betError.textContent = 'Please select at least one tile';
-      betError.classList.add('visible');
-      return;
-    }
-    if (!validateBet()) return;
-
-    isDrawing = true;
-
-    // Lock all tiles
-    kenoBoard.querySelectorAll('.keno-tile').forEach(t => {
-      t.classList.add('locked');
-      // Reset draw classes but keep selection
-      t.classList.remove('hit', 'drawn', 'missed');
-    });
-
-    // Show hits counter
-    hitCountEl.textContent = '0';
-    pickCountEl.textContent = selectedTiles.size;
-    hitsCounter.classList.add('visible');
-
-    // Draw 10 random numbers
-    const pool = [];
-    for (let i = 1; i <= TOTAL_TILES; i++) pool.push(i);
-    for (let i = pool.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [pool[i], pool[j]] = [pool[j], pool[i]];
-    }
-    const drawnNumbers = pool.slice(0, DRAW_COUNT);
-
-    // Animate draws
-    animateDraw(drawnNumbers);
-  }
-
-  // ── Animate Draw ──
-  function animateDraw(drawnNumbers) {
-    const tiles = kenoBoard.querySelectorAll('.keno-tile');
-    const delay = turboMode ? 80 : 300;
-    let hits = 0;
-    let drawIndex = 0;
-
-    function revealNext() {
-      if (drawIndex >= drawnNumbers.length) {
-        // Draw complete — show result
-        finishRound(hits);
-        return;
-      }
-
-      const num = drawnNumbers[drawIndex];
-      const tile = tiles[num - 1];
-
-      if (selectedTiles.has(num)) {
-        // HIT!
-        tile.classList.remove('selected');
-        tile.classList.add('hit');
-        hits++;
-        hitCountEl.textContent = hits;
-      } else {
-        // Drawn but not selected
-        tile.classList.add('drawn');
-      }
-
-      drawIndex++;
-      setTimeout(revealNext, delay);
-    }
-
-    revealNext();
-  }
-
-  // ── Finish Round ──
-  function finishRound(hits) {
-    const numPicks = selectedTiles.size;
-
-    // Mark selected tiles that weren't hit as missed
-    const tiles = kenoBoard.querySelectorAll('.keno-tile');
-    selectedTiles.forEach(num => {
-      const tile = tiles[num - 1];
-      if (!tile.classList.contains('hit')) {
-        tile.classList.add('missed');
-      }
-    });
-
-    // Look up multiplier
-    const table = payoutTables[currentRisk][numPicks];
-    const multiplier = table ? (table[hits] || 0) : 0;
-
-    // Show result
-    showResult(multiplier, hits, numPicks);
-
-    // Unlock after a brief pause
-    const resetDelay = turboMode ? 300 : 800;
-    setTimeout(() => {
-      // Reset tiles to just selected state
-      tiles.forEach(t => {
-        t.classList.remove('hit', 'drawn', 'missed', 'locked');
-      });
-      selectedTiles.forEach(num => {
-        tiles[num - 1].classList.add('selected');
-      });
-      hitsCounter.classList.remove('visible');
-      isDrawing = false;
-
-      // If autobet is running, trigger next
-      if (autobetRunning) {
-        handleAutobetResult(multiplier);
-      }
-    }, resetDelay);
-  }
-
-  // ── Show Result ──
-  function showResult(multiplier, hits, picks) {
-    const isWin = multiplier >= 1;
-
-    const pill = document.createElement('div');
-    pill.className = `result-pill ${isWin ? 'win' : 'loss'}`;
-    if (multiplier > 0) {
-      pill.textContent = isWin ? '+' + (multiplier >= 1000 ? multiplier.toLocaleString() : multiplier) + 'x' : multiplier + 'x';
-    } else {
-      pill.textContent = '0x';
-    }
-    resultTrack.appendChild(pill);
-    resultTrack.scrollLeft = resultTrack.scrollWidth;
-
-    // Button press effect
-    const btn = document.getElementById('betBtn');
-    btn.style.transform = 'scale(0.95)';
-    setTimeout(() => btn.style.transform = '', 150);
-  }
-
-  // ── Bet Validation ──
-  const betError = document.getElementById('betError');
-  const inputRow = betInput.closest('.input-row');
-
-  function validateBet() {
-    const val = parseFloat(betInput.value) || 0;
-    if (val > balance) {
-      betError.textContent = `Bet amount exceeds your balance of $${balance.toFixed(2)}`;
-      betError.classList.add('visible');
-      inputRow.classList.add('error');
-      return false;
-    }
-    if (val <= 0) {
-      betError.textContent = 'Please enter a bet amount';
-      betError.classList.add('visible');
-      inputRow.classList.add('error');
-      return false;
-    }
-    betError.classList.remove('visible');
-    inputRow.classList.remove('error');
-    return true;
-  }
-
-  function clearError() {
-    const val = parseFloat(betInput.value) || 0;
-    if (val <= balance && val > 0) {
-      betError.classList.remove('visible');
-      inputRow.classList.remove('error');
-    }
-  }
-
-  betInput.addEventListener('input', () => {
-    clearError();
-    updateDisplay();
-  });
-
-  // ── Autobet State ──
-  let isAutoMode = false;
+  // Autobet state
   let autobetRunning = false;
+  let autobetTimer = null;
   let autobetCount = 0;
-  let autobetTarget = 0;
-  let autobetOriginalBet = 0;
+  let autobetMaxBets = 10;
+  let autobetBaseBet = 0;
   let autobetProfit = 0;
-  let onWinAction = 'reset';
-  let onLossAction = 'reset';
-  const betBtnEl = document.getElementById('betBtn');
-  const btnContent = betBtnEl.querySelector('.btn-content');
 
-  // ── Bet Handler ──
-  betBtnEl.addEventListener('click', () => {
-    if (!isAutoMode) {
-      playRound();
+  // ── Math ──
+  const SLIDER_MIN = 0;
+  const SLIDER_MAX = 10000;
+  const MULT_MIN = 1.01;
+  const MULT_MAX = 1000000;
+
+  function probabilityFromMultiplier(mult) {
+    return 99 / mult;
+  }
+
+  function multiplierFromProbability(prob) {
+    return 99 / prob;
+  }
+
+  function generateResult() {
+    const rand = Math.random() || Number.MIN_VALUE;
+    const result = 0.99 / rand;
+    return Math.min(result, MULT_MAX);
+  }
+
+  // ── Logarithmic Slider Mapping ──
+  const LOG_MIN = Math.log(MULT_MIN);
+  const LOG_MAX = Math.log(MULT_MAX);
+
+  function sliderToMultiplier(sliderVal) {
+    const t = sliderVal / SLIDER_MAX;
+    return Math.exp(LOG_MIN + t * (LOG_MAX - LOG_MIN));
+  }
+
+  function multiplierToSlider(mult) {
+    const t = (Math.log(mult) - LOG_MIN) / (LOG_MAX - LOG_MIN);
+    return Math.round(Math.max(0, Math.min(SLIDER_MAX, t * SLIDER_MAX)));
+  }
+
+  // ── Format large multipliers ──
+  function formatMultiplier(val) {
+    if (val >= 10000) return (val / 1000).toFixed(1) + 'Kx';
+    if (val >= 100) return val.toFixed(1) + 'x';
+    return val.toFixed(2) + 'x';
+  }
+
+  // ── Master Sync ──
+  function syncAllFromMultiplier() {
+    targetMultiplier = Math.max(MULT_MIN, Math.min(MULT_MAX, targetMultiplier));
+    const prob = probabilityFromMultiplier(targetMultiplier);
+
+    // Slider
+    limboSlider.value = multiplierToSlider(targetMultiplier);
+    const fillPct = (parseInt(limboSlider.value) / SLIDER_MAX) * 100;
+    sliderFill.style.left = '0%';
+    sliderFill.style.width = fillPct + '%';
+
+    // Manual settings
+    multInput.value = targetMultiplier.toFixed(2);
+    winProbInput.value = prob.toFixed(4);
+
+    // Viewport control
+    if (controlMode === 'probability') {
+      controlInput.value = prob.toFixed(4);
+      swapValue.textContent = targetMultiplier.toFixed(2);
+      swapText.innerHTML = 'Multiplier: <span id="swapValue">' + targetMultiplier.toFixed(2) + '</span>x';
     } else {
-      if (autobetRunning) {
-        stopAutobet();
-      } else {
-        if (selectedTiles.size === 0) {
-          betError.textContent = 'Please select at least one tile';
-          betError.classList.add('visible');
-          return;
-        }
-        if (!validateBet()) return;
-        startAutobet();
-      }
+      controlInput.value = targetMultiplier.toFixed(2);
+      swapValue.textContent = prob.toFixed(4);
+      swapText.innerHTML = 'Probability: <span id="swapValue">' + prob.toFixed(4) + '</span>%';
     }
+
+    // Target label
+    targetLabelEl.textContent = 'Target: ' + targetMultiplier.toFixed(2) + 'x';
+
+    updateWin();
+  }
+
+  function updateWin() {
+    const val = parseFloat(betInput.value) || 0;
+    const win = (val * targetMultiplier).toFixed(2);
+    potentialWin.textContent = `Win: $${win} (${targetMultiplier.toFixed(2)}x)`;
+  }
+
+  function updateBalanceDisplay() {
+    document.querySelector('.balance-pill').innerHTML =
+      '<div class="balance-dot"></div>$' + balance.toFixed(2);
+  }
+
+  // ── Slider Events ──
+  limboSlider.addEventListener('input', () => {
+    targetMultiplier = sliderToMultiplier(parseInt(limboSlider.value));
+    syncAllFromMultiplier();
   });
 
-  function startAutobet() {
-    const numBetsInput = document.getElementById('numBets');
-    const targetBets = parseInt(numBetsInput.value);
-    autobetTarget = isNaN(targetBets) || targetBets <= 0 ? Infinity : targetBets;
-    autobetCount = 0;
-    autobetProfit = 0;
-    autobetOriginalBet = parseFloat(betInput.value) || 0;
-    autobetRunning = true;
-
-    // Read on win/loss settings
-    const winSeg = document.querySelector('.autobet-seg-btn.active[data-target="onWin"]');
-    onWinAction = winSeg ? winSeg.dataset.action : 'reset';
-    const lossSeg = document.querySelector('.autobet-seg-btn.active[data-target="onLoss"]');
-    onLossAction = lossSeg ? lossSeg.dataset.action : 'reset';
-
-    btnContent.textContent = 'Stop Autobet';
-    betBtnEl.style.background = '#dc2626';
-    runNextAutoBet();
-  }
-
-  function stopAutobet() {
-    autobetRunning = false;
-    btnContent.textContent = 'Start Autobet';
-    betBtnEl.style.background = '';
-  }
-
-  function runNextAutoBet() {
-    if (!autobetRunning) return;
-    if (autobetCount >= autobetTarget) {
-      stopAutobet();
-      return;
-    }
-    autobetCount++;
-    playRound();
-  }
-
-  function handleAutobetResult(multiplier) {
-    const betVal = parseFloat(betInput.value) || 0;
-    const payout = betVal * multiplier;
-    const profit = payout - betVal;
-    autobetProfit += profit;
-
-    // Check stop conditions
-    const stopProfitVal = parseFloat(document.getElementById('stopProfit').value) || 0;
-    const stopLossVal = parseFloat(document.getElementById('stopLoss').value) || 0;
-
-    if (stopProfitVal > 0 && autobetProfit >= stopProfitVal) {
-      stopAutobet();
-      return;
-    }
-    if (stopLossVal > 0 && autobetProfit <= -stopLossVal) {
-      stopAutobet();
-      return;
-    }
-
-    // Adjust bet based on win/loss
-    const isWin = multiplier >= 1;
-    if (isWin) {
-      if (onWinAction === 'reset') {
-        betInput.value = autobetOriginalBet.toFixed(2);
-      } else if (onWinAction === 'increase') {
-        const pct = parseFloat(document.getElementById('onWinPctInput').value) || 0;
-        const newBet = betVal * (1 + pct / 100);
-        betInput.value = Math.min(newBet, balance).toFixed(2);
-      }
+  // ── Viewport Control Input ──
+  controlInput.addEventListener('change', () => {
+    let val = parseFloat(controlInput.value);
+    if (controlMode === 'probability') {
+      if (!val || val < 0.000099) val = 0.000099;
+      if (val > 98.02) val = 98.02;
+      targetMultiplier = multiplierFromProbability(val);
     } else {
-      if (onLossAction === 'reset') {
-        betInput.value = autobetOriginalBet.toFixed(2);
-      } else if (onLossAction === 'increase') {
-        const pct = parseFloat(document.getElementById('onLossPctInput').value) || 0;
-        const newBet = betVal * (1 + pct / 100);
-        betInput.value = Math.min(newBet, balance).toFixed(2);
-      }
+      if (!val || val < MULT_MIN) val = MULT_MIN;
+      if (val > MULT_MAX) val = MULT_MAX;
+      targetMultiplier = val;
     }
-
-    // Continue autobet
-    if (autobetRunning) {
-      const delay = turboMode ? 200 : 500;
-      setTimeout(runNextAutoBet, delay);
-    }
-  }
-
-  // ── Risk Toggle ──
-  document.querySelectorAll('.risk-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (isDrawing) return;
-      document.querySelectorAll('.risk-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentRisk = btn.dataset.risk;
-      updateDisplay();
-    });
+    syncAllFromMultiplier();
   });
 
-  // ── Auto Pick / Clear ──
-  document.getElementById('autoPickBtn').addEventListener('click', () => {
-    const count = parseInt(document.getElementById('pickCountSelect').value);
-    autoPick(count);
+  // ── Swap Button ──
+  swapBtn.addEventListener('click', () => {
+    if (controlMode === 'probability') {
+      controlMode = 'multiplier';
+      controlLabel.textContent = 'Multiplier';
+      controlSuffix.textContent = 'x';
+    } else {
+      controlMode = 'probability';
+      controlLabel.textContent = 'Probability';
+      controlSuffix.textContent = '%';
+    }
+    syncAllFromMultiplier();
   });
 
-  document.getElementById('clearAllBtn').addEventListener('click', clearAll);
+  // ── Manual Settings: Reverse Sync ──
+  multInput.addEventListener('change', () => {
+    let val = parseFloat(multInput.value);
+    if (val && val >= MULT_MIN) {
+      targetMultiplier = Math.min(val, MULT_MAX);
+      syncAllFromMultiplier();
+    }
+  });
+
+  winProbInput.addEventListener('change', () => {
+    let wp = parseFloat(winProbInput.value);
+    if (wp && wp >= 0.01 && wp <= 98.02) {
+      targetMultiplier = multiplierFromProbability(wp);
+      syncAllFromMultiplier();
+    }
+  });
+
+  betInput.addEventListener('input', () => updateWin());
 
   // ── Quick Amount Buttons ──
   let maxConfirmPending = false;
@@ -2027,8 +1613,105 @@
       }
 
       betInput.value = Math.max(0, Math.min(val, balance)).toFixed(2);
-      updateDisplay();
+      updateWin();
     });
+  });
+
+  // ── Animation ──
+  function animateResult(finalValue, isWin, callback) {
+    const duration = turboMode ? 150 : 1000;
+    const startTime = performance.now();
+
+    limboResult.classList.remove('win', 'loss');
+    limboResult.classList.add('animating');
+
+    function animate(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+
+      const currentValue = 1.00 + (finalValue - 1.00) * eased;
+      limboResult.textContent = formatMultiplier(currentValue);
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        limboResult.textContent = formatMultiplier(finalValue);
+        limboResult.classList.remove('animating');
+        limboResult.classList.add(isWin ? 'win' : 'loss');
+        callback();
+      }
+    }
+
+    requestAnimationFrame(animate);
+  }
+
+  // ── Result Pills ──
+  function addResultPill(isWin, resultMultiplier) {
+    const pill = document.createElement('div');
+    pill.className = `result-pill ${isWin ? 'win' : 'loss'}`;
+    pill.textContent = isWin
+      ? '+' + targetMultiplier.toFixed(2) + 'x'
+      : formatMultiplier(resultMultiplier);
+    resultTrack.appendChild(pill);
+    resultTrack.scrollLeft = resultTrack.scrollWidth;
+  }
+
+  // ── Play Limbo ──
+  function playLimbo() {
+    if (isAnimating) return;
+
+    const betAmt = parseFloat(betInput.value) || 0;
+    if (betAmt <= 0) return;
+    if (betAmt > balance) return;
+
+    isAnimating = true;
+    betBtn.style.opacity = '0.7';
+    betBtn.style.pointerEvents = 'none';
+
+    // Deduct bet
+    balance -= betAmt;
+    updateBalanceDisplay();
+
+    // Generate result
+    const result = generateResult();
+    const isWin = result >= targetMultiplier;
+
+    // Button press effect
+    betBtn.style.transform = 'scale(0.95)';
+    setTimeout(() => betBtn.style.transform = '', 150);
+
+    // Animate
+    animateResult(result, isWin, () => {
+      if (isWin) {
+        const winAmt = betAmt * targetMultiplier;
+        balance += winAmt;
+      }
+      updateBalanceDisplay();
+      addResultPill(isWin, result);
+
+      isAnimating = false;
+      betBtn.style.opacity = '';
+      betBtn.style.pointerEvents = '';
+
+      if (autobetRunning) {
+        processAutobetResult(isWin, betAmt);
+      }
+    });
+  }
+
+  // ── Bet Button ──
+  betBtn.addEventListener('click', () => {
+    const isAutoMode = document.querySelector('.bet-mode-btn[data-mode="auto"]').classList.contains('active');
+    if (isAutoMode) {
+      if (autobetRunning) {
+        stopAutobet();
+      } else {
+        startAutobet();
+      }
+    } else {
+      playLimbo();
+    }
   });
 
   // ── Bet Mode Toggle ──
@@ -2038,29 +1721,90 @@
     btn.addEventListener('click', () => {
       document.querySelectorAll('.bet-mode-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      isAutoMode = btn.dataset.mode === 'auto';
-      autobetPanel.style.display = isAutoMode ? '' : 'none';
-      manualPanel.style.display = isAutoMode ? 'none' : '';
-      if (isAutoMode) {
-        btnContent.textContent = 'Start Autobet';
-      } else {
-        if (autobetRunning) stopAutobet();
-        btnContent.textContent = 'Bet Now';
-      }
-      betBtnEl.style.background = '';
+      const isAuto = btn.dataset.mode === 'auto';
+      autobetPanel.style.display = isAuto ? '' : 'none';
+      manualPanel.style.display = isAuto ? 'none' : '';
+      betBtn.querySelector('.btn-content').textContent = isAuto ? 'Start Autobet' : 'Bet Now';
+      if (!isAuto && autobetRunning) stopAutobet();
     });
   });
+
+  // ── Autobet ──
+  function startAutobet() {
+    const betAmt = parseFloat(betInput.value) || 0;
+    if (betAmt <= 0 || betAmt > balance) return;
+
+    autobetMaxBets = parseInt(document.getElementById('numBets').value) || Infinity;
+    if (document.getElementById('numBets').value === '') autobetMaxBets = Infinity;
+    autobetBaseBet = betAmt;
+    autobetCount = 0;
+    autobetProfit = 0;
+    autobetRunning = true;
+
+    betBtn.querySelector('.btn-content').textContent = 'Stop Autobet';
+    playLimbo();
+  }
+
+  function stopAutobet() {
+    autobetRunning = false;
+    clearTimeout(autobetTimer);
+    const isAutoMode = document.querySelector('.bet-mode-btn[data-mode="auto"]').classList.contains('active');
+    betBtn.querySelector('.btn-content').textContent = isAutoMode ? 'Start Autobet' : 'Bet Now';
+  }
+
+  function processAutobetResult(isWin, betAmt) {
+    autobetCount++;
+    const payout = isWin ? betAmt * targetMultiplier : 0;
+    autobetProfit += (payout - betAmt);
+
+    // Check stop conditions
+    if (autobetCount >= autobetMaxBets) { stopAutobet(); return; }
+
+    const stopProfitInputs = document.querySelectorAll('.autobet-stop-input');
+    const stopProfit = parseFloat(stopProfitInputs[0]?.value) || 0;
+    const stopLoss = parseFloat(stopProfitInputs[1]?.value) || 0;
+
+    if (stopProfit > 0 && autobetProfit >= stopProfit) { stopAutobet(); return; }
+    if (stopLoss > 0 && autobetProfit <= -stopLoss) { stopAutobet(); return; }
+
+    // Get on win/loss settings
+    const onWinBtn = document.querySelector('[data-target="onWin"].active');
+    const onLossBtn = document.querySelector('[data-target="onLoss"].active');
+    const onWinAction = onWinBtn ? onWinBtn.dataset.action : 'reset';
+    const onLossAction = onLossBtn ? onLossBtn.dataset.action : 'reset';
+    const onWinPct = parseFloat(document.querySelector('#onWinPct .autobet-pct-input')?.value) || 50;
+    const onLossPct = parseFloat(document.querySelector('#onLossPct .autobet-pct-input')?.value) || 100;
+
+    // Adjust bet
+    let nextBet = parseFloat(betInput.value);
+    if (isWin) {
+      nextBet = onWinAction === 'reset' ? autobetBaseBet : nextBet * (1 + onWinPct / 100);
+    } else {
+      nextBet = onLossAction === 'reset' ? autobetBaseBet : nextBet * (1 + onLossPct / 100);
+    }
+
+    nextBet = Math.min(nextBet, balance);
+    if (nextBet <= 0 || balance <= 0) { stopAutobet(); return; }
+
+    betInput.value = nextBet.toFixed(2);
+    updateWin();
+
+    const delay = turboMode ? 200 : 1000;
+    autobetTimer = setTimeout(() => {
+      if (autobetRunning) playLimbo();
+    }, delay);
+  }
 
   // ── Autobet Number Chips ──
   document.querySelectorAll('.autobet-chip').forEach(chip => {
     chip.addEventListener('click', () => {
       const v = chip.dataset.bets;
       document.getElementById('numBets').value = v === 'Infinity' ? '' : v;
-      if (v === 'Infinity') document.getElementById('numBets').placeholder = '\u221E';
+      if (v === 'Infinity') document.getElementById('numBets').placeholder = '∞';
     });
   });
 
-  // ── On Win/Loss Segmented Toggle ──
+  // ── On Win / On Loss Segmented Toggles ──
   document.querySelectorAll('.autobet-seg-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const seg = btn.closest('.autobet-seg');
@@ -2072,17 +1816,7 @@
     });
   });
 
-  // ── Turbo Toggle (autobet panel) ──
-  const autobetTurboToggle = document.getElementById('turboToggle');
-  autobetTurboToggle.addEventListener('click', function() {
-    turboMode = !turboMode;
-    this.classList.toggle('active', turboMode);
-    // Sync with settings popup toggle
-    if (turboSettingsToggle) turboSettingsToggle.classList.toggle('active', turboMode);
-  });
-
   // ── Settings Popup ──
-  let soundEnabled = false;
   const settingsPopup = document.getElementById('settingsPopup');
   const soundToggle = document.getElementById('soundToggle');
   const turboSettingsToggle = document.getElementById('turboSettingsToggle');
@@ -2109,13 +1843,10 @@
   turboSettingsToggle.addEventListener('click', () => {
     turboMode = !turboMode;
     turboSettingsToggle.classList.toggle('active', turboMode);
-    // Sync with autobet turbo toggle
-    autobetTurboToggle.classList.toggle('active', turboMode);
   });
 
   // ── Init ──
-  generateBoard();
-  updateDisplay();
+  syncAllFromMultiplier();
 </script>
 
 </body>
