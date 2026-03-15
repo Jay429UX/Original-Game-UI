@@ -1008,9 +1008,11 @@
       height: 18px;
     }
 
-    /* When game is active on mobile: hide bet controls, show action buttons */
-    body.mobile-game-active .bet-controls { display: none; }
-    body.mobile-game-active .mobile-actions { display: block; }
+    /* When game is active on mobile: hide bet inputs, show action buttons, keep settings */
+    body.mobile-game-active .bet-controls .input-group { display: none; }
+    body.mobile-game-active .bet-controls .bet-button { display: none; }
+    body.mobile-game-active .bet-controls { border-top: none; border-radius: 0 0 var(--radius) var(--radius); }
+    body.mobile-game-active .mobile-actions { display: block; border-radius: 0; border-bottom: none; }
   }
 
   @media (max-width: 380px) {
