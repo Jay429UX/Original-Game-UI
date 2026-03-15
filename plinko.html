@@ -221,11 +221,24 @@
     pointer-events: none;
   }
 
-  /* ── Plinko Settings (rows & risk) ── */
+  /* ── Plinko Settings (risk & rows) ── */
   .sidebar-plinko-settings {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
+  }
+
+  .risk-toggle .plinko-setting-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .risk-toggle-btns {
+    display: flex;
+    gap: 4px;
   }
 
   .game-bottom { display: none; }
@@ -864,6 +877,11 @@
   /* ── Risk Toggle ── */
   .risk-toggle {
     display: flex;
+    flex-direction: column;
+  }
+
+  .risk-toggle-btns {
+    display: flex;
     background: rgba(0, 0, 0, 0.55);
     border-radius: var(--radius-sm);
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -1377,8 +1395,16 @@
         <div class="bet-error" id="betError">Bet amount exceeds your balance of $100.00</div>
       </div>
 
-      <!-- Plinko Settings (rows & risk) -->
+      <!-- Plinko Settings (risk & rows) -->
       <div class="sidebar-plinko-settings">
+        <div class="risk-toggle">
+          <span class="plinko-setting-label">Risk</span>
+          <div class="risk-toggle-btns">
+            <button class="risk-btn" data-risk="low">Low</button>
+            <button class="risk-btn active" data-risk="medium">Medium</button>
+            <button class="risk-btn" data-risk="high">High</button>
+          </div>
+        </div>
         <div class="plinko-setting">
           <div class="plinko-setting-row">
             <span class="plinko-setting-label">Rows</span>
@@ -1387,11 +1413,6 @@
           <div class="coin-slider-track">
             <input type="range" class="coin-slider" id="rowsSliderDesktop" min="8" max="16" value="16">
           </div>
-        </div>
-        <div class="risk-toggle">
-          <button class="risk-btn" data-risk="low">Low Risk</button>
-          <button class="risk-btn active" data-risk="medium">Medium Risk</button>
-          <button class="risk-btn" data-risk="high">High Risk</button>
         </div>
       </div>
 
