@@ -228,10 +228,10 @@
     border-radius: 0 0 var(--radius) var(--radius);
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-top: none;
-    padding: 16px;
+    padding: 20px 16px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 20px;
     flex-shrink: 0;
   }
   /* Mobile order for bet controls */
@@ -284,51 +284,38 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 14px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-xs);
+    padding: 10px 4px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .stat-row:last-child {
+    border-bottom: none;
   }
 
   .stat-label {
     font-size: 13px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    letter-spacing: 0.02em;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.4);
   }
 
-  .stat-value-wrap {
+  .stat-value {
     display: flex;
     align-items: center;
     gap: 2px;
   }
 
-  .stat-input {
-    width: 90px;
-    padding: 0;
-    border: none;
-    outline: none;
-    background: transparent;
+  .stat-number {
     font-family: 'Outfit', sans-serif;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     color: var(--text-primary);
-    text-align: right;
-    caret-color: var(--green-primary);
-    -moz-appearance: textfield;
-  }
-
-  .stat-input::-webkit-outer-spin-button,
-  .stat-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
   }
 
   .stat-suffix {
     font-family: 'Outfit', sans-serif;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
-    color: var(--text-secondary);
+    color: var(--text-primary);
   }
 
   /* ── Auto Bet Settings ── */
@@ -1230,8 +1217,8 @@
 
   /* ══ Desktop Layout ══ */
   @media (min-width: 768px) {
-    .app-shell { max-width: 1200px; }
-    .header { padding: 14px 24px; }
+    .app-shell { max-width: none; border: none; }
+    .header { padding: 14px 24px; max-width: 1200px; width: 100%; margin: 0 auto; }
 
     .main-content {
       display: grid;
@@ -1239,6 +1226,9 @@
       grid-template-rows: 1fr auto;
       height: calc(100vh - 62px);
       max-height: 780px;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
       padding: 0 24px 24px;
       flex: none;
       min-height: 0;
@@ -1253,7 +1243,7 @@
       border-bottom: none;
       overflow: visible;
       padding: 20px;
-      gap: 18px;
+      gap: 20px;
     }
 
     /* Desktop sidebar reorder */
@@ -1423,15 +1413,15 @@
       <div class="manual-settings" id="manualSettings">
         <div class="stat-row">
           <span class="stat-label">Max Multiplier</span>
-          <div class="stat-value-wrap">
-            <input class="stat-input" type="text" id="multInput" readonly value="—">
+          <div class="stat-value">
+            <span class="stat-number" id="multInput">—</span>
             <span class="stat-suffix">x</span>
           </div>
         </div>
         <div class="stat-row">
           <span class="stat-label">Tiles Selected</span>
-          <div class="stat-value-wrap">
-            <input class="stat-input" type="text" id="tilesInput" readonly value="0">
+          <div class="stat-value">
+            <span class="stat-number" id="tilesInput">0</span>
           </div>
         </div>
       </div>
@@ -1715,18 +1705,18 @@
   // ── Update Display ──
   function updateDisplay() {
     const count = selectedTiles.size;
-    tilesInput.value = count;
+    tilesInput.textContent = count;
     pickCountEl.textContent = count;
 
     if (count === 0) {
-      multInput.value = '—';
+      multInput.textContent = '—';
       potentialWin.textContent = 'Select tiles to play';
       return;
     }
 
     const table = payoutTables[currentRisk][count];
     const maxMult = table ? Math.max(...table) : 0;
-    multInput.value = maxMult >= 1000 ? maxMult.toLocaleString() : maxMult;
+    multInput.textContent = maxMult >= 1000 ? maxMult.toLocaleString() : maxMult;
 
     const val = parseFloat(betInput.value) || 0;
     const maxWin = (val * maxMult).toFixed(2);

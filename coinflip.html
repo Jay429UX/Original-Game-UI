@@ -265,10 +265,10 @@
     border-radius: 0 0 var(--radius) var(--radius);
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-top: none;
-    padding: 16px;
+    padding: 20px 16px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 20px;
     flex-shrink: 0;
   }
 
@@ -313,51 +313,38 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 14px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-xs);
+    padding: 10px 4px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .stat-row:last-child {
+    border-bottom: none;
   }
 
   .stat-label {
     font-size: 13px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    letter-spacing: 0.02em;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.4);
   }
 
-  .stat-value-wrap {
+  .stat-value {
     display: flex;
     align-items: center;
     gap: 2px;
   }
 
-  .stat-input {
-    width: 90px;
-    padding: 0;
-    border: none;
-    outline: none;
-    background: transparent;
+  .stat-number {
     font-family: 'Outfit', sans-serif;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     color: var(--text-primary);
-    text-align: right;
-    caret-color: var(--green-primary);
-    -moz-appearance: textfield;
-  }
-
-  .stat-input::-webkit-outer-spin-button,
-  .stat-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
   }
 
   .stat-suffix {
     font-family: 'Outfit', sans-serif;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
-    color: var(--text-secondary);
+    color: var(--text-primary);
   }
 
   /* ── Auto Bet Settings ── */
@@ -1276,8 +1263,8 @@
 
   /* ══ Desktop Layout ══ */
   @media (min-width: 768px) {
-    .app-shell { max-width: 1200px; }
-    .header { padding: 14px 24px; }
+    .app-shell { max-width: none; border: none; }
+    .header { padding: 14px 24px; max-width: 1200px; width: 100%; margin: 0 auto; }
 
     .main-content {
       display: grid;
@@ -1285,6 +1272,9 @@
       grid-template-rows: 1fr auto;
       height: calc(100vh - 62px);
       max-height: 780px;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
       padding: 0 24px 24px;
       flex: none;
       min-height: 0;
@@ -1299,7 +1289,7 @@
       border-bottom: none;
       overflow: visible;
       padding: 20px;
-      gap: 18px;
+      gap: 20px;
     }
 
     /* Desktop sidebar reorder */
@@ -1466,15 +1456,15 @@
       <div class="manual-settings" id="manualSettings">
         <div class="stat-row">
           <span class="stat-label">Multiplier</span>
-          <div class="stat-value-wrap">
-            <input class="stat-input" type="number" id="multInput" step="0.0001" min="1.01">
+          <div class="stat-value">
+            <span class="stat-number" id="multInput">1.9800</span>
             <span class="stat-suffix">x</span>
           </div>
         </div>
         <div class="stat-row">
-          <span class="stat-label">Win Probability</span>
-          <div class="stat-value-wrap">
-            <input class="stat-input" type="number" id="winProbInput" step="0.1" min="0.01" max="99">
+          <span class="stat-label">Chance</span>
+          <div class="stat-value">
+            <span class="stat-number" id="winProbInput">50</span>
             <span class="stat-suffix">%</span>
           </div>
         </div>
@@ -1699,8 +1689,8 @@
     // Multiplier & win probability
     const mult = getMultiplier();
     const winChance = getWinChance() * 100;
-    multInput.value = mult.toFixed(4);
-    winProbInput.value = parseFloat(winChance.toFixed(2));
+    multInput.textContent = mult.toFixed(4);
+    winProbInput.textContent = parseFloat(winChance.toFixed(2));
     updateWin(mult);
   }
 
@@ -1826,16 +1816,7 @@
     });
   });
 
-  // ── Manual settings: reverse sync ──
-  multInput.addEventListener('change', () => {
-    const val = parseFloat(multInput.value);
-    if (val && val >= 1.01) updateGameUI();
-  });
-
-  winProbInput.addEventListener('change', () => {
-    const wp = parseFloat(winProbInput.value);
-    if (wp && wp >= 0.01 && wp <= 99) updateGameUI();
-  });
+  // Multiplier and win probability are display-only, updated by game logic
 
   // ── Autobet number chips ──
   document.querySelectorAll('.autobet-chip').forEach(chip => {
