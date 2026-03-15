@@ -167,7 +167,7 @@
     border-radius: var(--radius) var(--radius) 0 0;
     overflow: hidden;
     position: relative;
-    background: linear-gradient(to top, rgba(0,171,76,0.08) 0%, rgba(14,16,14,0.85) 60%), url('assets/background.png') center/cover no-repeat;
+    background: linear-gradient(to top, rgba(0,171,76,0.08) 0%, #0e100e 60%);
     border: 1px solid var(--border);
     border-bottom: none;
     display: flex;
@@ -177,6 +177,22 @@
     padding: 24px 20px 20px;
     height: calc(100dvh - 50px - 70px - 48px - 110px - 32px);
     min-height: 200px;
+  }
+
+  .game-viewport::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('assets/background.png') center/cover no-repeat;
+    opacity: 0.2;
+    z-index: 0;
+    border-radius: var(--radius) var(--radius) 0 0;
+    pointer-events: none;
+  }
+
+  .game-viewport > * {
+    position: relative;
+    z-index: 1;
   }
 
   .game-viewport .game-content {
@@ -794,7 +810,7 @@
     z-index: 1;
     width: 100%;
     max-width: 520px;
-    background: rgba(255,255,255,0.04);
+    background: #161816;
     border: 1px solid rgba(255,255,255,0.06);
     border-radius: 14px;
     padding: 18px 20px 28px;
