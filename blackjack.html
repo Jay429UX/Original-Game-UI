@@ -467,45 +467,45 @@
   }
 
   /* Hit - green */
-  #hitBtn, #hitBtn2 {
+  #hitBtn, #hitBtn2, .mobile-hit {
     background: linear-gradient(180deg, rgba(0,171,76,0.25) 0%, rgba(0,171,76,0.08) 100%);
     border: 1px solid rgba(0,171,76,0.2);
     color: rgba(0,230,90,0.7);
   }
-  #hitBtn:hover:not(:disabled), #hitBtn2:hover:not(:disabled) {
+  #hitBtn:hover:not(:disabled), #hitBtn2:hover:not(:disabled), .mobile-hit:hover:not(:disabled) {
     background: linear-gradient(180deg, rgba(0,171,76,0.35) 0%, rgba(0,171,76,0.12) 100%);
     color: rgba(0,230,90,0.9);
   }
 
   /* Stand - red */
-  #standBtn, #standBtn2 {
+  #standBtn, #standBtn2, .mobile-stand {
     background: linear-gradient(180deg, rgba(220,38,38,0.25) 0%, rgba(220,38,38,0.08) 100%);
     border: 1px solid rgba(220,38,38,0.2);
     color: rgba(248,113,113,0.7);
   }
-  #standBtn:hover:not(:disabled), #standBtn2:hover:not(:disabled) {
+  #standBtn:hover:not(:disabled), #standBtn2:hover:not(:disabled), .mobile-stand:hover:not(:disabled) {
     background: linear-gradient(180deg, rgba(220,38,38,0.35) 0%, rgba(220,38,38,0.12) 100%);
     color: rgba(248,113,113,0.9);
   }
 
   /* Double - yellow */
-  #doubleBtn, #doubleBtn2 {
+  #doubleBtn, #doubleBtn2, .mobile-double {
     background: linear-gradient(180deg, rgba(234,179,8,0.25) 0%, rgba(234,179,8,0.08) 100%);
     border: 1px solid rgba(234,179,8,0.2);
     color: rgba(250,204,21,0.7);
   }
-  #doubleBtn:hover:not(:disabled), #doubleBtn2:hover:not(:disabled) {
+  #doubleBtn:hover:not(:disabled), #doubleBtn2:hover:not(:disabled), .mobile-double:hover:not(:disabled) {
     background: linear-gradient(180deg, rgba(234,179,8,0.35) 0%, rgba(234,179,8,0.12) 100%);
     color: rgba(250,204,21,0.9);
   }
 
   /* Split - blue */
-  #splitBtn, #splitBtn2 {
+  #splitBtn, #splitBtn2, .mobile-split {
     background: linear-gradient(180deg, rgba(59,130,246,0.25) 0%, rgba(59,130,246,0.08) 100%);
     border: 1px solid rgba(59,130,246,0.2);
     color: rgba(96,165,250,0.7);
   }
-  #splitBtn:hover:not(:disabled), #splitBtn2:hover:not(:disabled) {
+  #splitBtn:hover:not(:disabled), #splitBtn2:hover:not(:disabled), .mobile-split:hover:not(:disabled) {
     background: linear-gradient(180deg, rgba(59,130,246,0.35) 0%, rgba(59,130,246,0.12) 100%);
     color: rgba(96,165,250,0.9);
   }
@@ -975,27 +975,40 @@
     .hand-area { gap: 3px; }
     .cards-row { min-height: 56px; gap: 4px; }
     .vs-divider { margin: 0; font-size: 10px; }
-    .card { width: 44px; height: 62px; border-radius: 6px; }
-    .card .card-rank { font-size: 14px; }
-    .card .card-suit { font-size: 16px; }
+    .card { width: 48px; height: 68px; border-radius: 6px; }
+    .card .card-rank { font-size: 15px; }
+    .card .card-suit { font-size: 17px; }
     .hand-label { font-size: 10px; }
     .hand-score { font-size: 11px; padding: 1px 8px; }
-    .action-buttons {
+
+    /* Hide action buttons inside game viewport on mobile */
+    .game-bottom { display: none; }
+
+    /* Mobile action buttons that replace bet controls */
+    .mobile-actions {
+      display: none;
+      padding: 10px 16px;
+    }
+    .mobile-actions .action-buttons {
       flex-wrap: wrap;
+      gap: 6px;
+    }
+    .mobile-actions .action-btn {
+      flex: 1 1 calc(50% - 3px);
+      min-width: calc(50% - 3px);
+      padding: 12px 4px;
+      font-size: 12px;
       gap: 4px;
+      border-radius: 10px;
     }
-    .action-buttons .action-btn {
-      flex: 1 1 calc(50% - 2px);
-      min-width: calc(50% - 2px);
-      padding: 6px 4px;
-      font-size: 10px;
-      gap: 2px;
-      border-radius: 8px;
+    .mobile-actions .action-btn svg {
+      width: 18px;
+      height: 18px;
     }
-    .action-buttons .action-btn svg {
-      width: 14px;
-      height: 14px;
-    }
+
+    /* When game is active on mobile: hide bet controls, show action buttons */
+    body.mobile-game-active .bet-controls { display: none; }
+    body.mobile-game-active .mobile-actions { display: block; }
   }
 
   @media (max-width: 380px) {
@@ -1184,6 +1197,29 @@
       <button class="bet-button" id="placeBetBtn">
         <div class="btn-content">Place Bet</div>
       </button>
+    </div>
+
+    <!-- Mobile Action Buttons (replaces bet controls during game) -->
+    <div class="mobile-actions">
+      <div class="action-buttons">
+        <button class="action-btn mobile-hit" onclick="document.getElementById('hitBtn').click()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-4 0v5"/><path d="M14 10V4a2 2 0 0 0-4 0v6"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8a6 6 0 0 0 12 0v-2a2 2 0 0 0-4 0"/></svg>
+          Hit
+        </button>
+        <button class="action-btn mobile-stand" onclick="document.getElementById('standBtn').click()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><rect x="8" y="8" width="8" height="8" rx="1"/></svg>
+          Stand
+        </button>
+        <button class="action-btn mobile-double" onclick="document.getElementById('doubleBtn').click()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="10" height="14" rx="1"/><rect x="12" y="4" width="10" height="14" rx="1"/></svg>
+          Double
+        </button>
+        <button class="action-btn mobile-split" onclick="document.getElementById('splitBtn').click()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22V8"/><path d="M21 3l-9 9"/><path d="M3 3l9 9"/></svg>
+          Split
+        </button>
+      </div>
+    </div>
 
       <!-- Sidebar Actions (desktop only) -->
       <div class="sidebar-actions">
@@ -1492,6 +1528,7 @@ function enableActions(canSplit) {
   standBtn.disabled = false;
   doubleBtn.disabled = currentBet > currentBalance;
   splitBtn.disabled = !canSplit || currentBet > currentBalance;
+  syncMobileActions();
 }
 
 function disableActions() {
@@ -1499,6 +1536,18 @@ function disableActions() {
   standBtn.disabled = true;
   doubleBtn.disabled = true;
   splitBtn.disabled = true;
+  syncMobileActions();
+}
+
+function syncMobileActions() {
+  const mh = document.querySelector('.mobile-hit');
+  const ms = document.querySelector('.mobile-stand');
+  const md = document.querySelector('.mobile-double');
+  const mp = document.querySelector('.mobile-split');
+  if (mh) mh.disabled = hitBtn.disabled;
+  if (ms) ms.disabled = standBtn.disabled;
+  if (md) md.disabled = doubleBtn.disabled;
+  if (mp) mp.disabled = splitBtn.disabled;
 }
 
 function canSplitHand() {
@@ -1525,6 +1574,7 @@ async function startGame() {
   placeBetBtn.disabled = true;
   betAmountInput.disabled = true;
   updateChipStates();
+  document.body.classList.add('mobile-game-active');
 
   deck = shuffle(createDeck());
   playerHand = [];
@@ -1765,6 +1815,7 @@ function endRound() {
   betAmountInput.disabled = false;
   placeBetBtn.querySelector('.btn-content').textContent = 'Place Bet';
   updateChipStates();
+  document.body.classList.remove('mobile-game-active');
 }
 
 // ── Chip Clicks ──
