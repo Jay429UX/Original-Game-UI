@@ -983,19 +983,13 @@
     /* Hide action buttons inside game viewport on mobile */
     .game-bottom { display: none; }
 
-    /* Mobile action buttons that replace bet controls */
-    .mobile-actions {
-      display: none;
-      padding: 16px;
-      background: #161816;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 0 0 var(--radius) var(--radius);
-    }
-    .mobile-actions .action-buttons {
+    /* Mobile inline action buttons - hidden by default */
+    .mobile-actions-inline { display: none; }
+    .mobile-actions-inline .action-buttons {
       flex-wrap: wrap;
       gap: 6px;
     }
-    .mobile-actions .action-btn {
+    .mobile-actions-inline .action-btn {
       flex: 1 1 calc(50% - 3px);
       min-width: calc(50% - 3px);
       padding: 12px 4px;
@@ -1003,16 +997,15 @@
       gap: 4px;
       border-radius: 10px;
     }
-    .mobile-actions .action-btn svg {
+    .mobile-actions-inline .action-btn svg {
       width: 18px;
       height: 18px;
     }
 
-    /* When game is active on mobile: hide bet inputs, show action buttons, keep settings */
+    /* When game is active on mobile: hide bet inputs, show action buttons */
     body.mobile-game-active .bet-controls .input-group { display: none; }
     body.mobile-game-active .bet-controls .bet-button { display: none; }
-    body.mobile-game-active .bet-controls { border-top: none; border-radius: 0 0 var(--radius) var(--radius); }
-    body.mobile-game-active .mobile-actions { display: block; border-radius: 0; border-bottom: none; }
+    body.mobile-game-active .mobile-actions-inline { display: block; }
   }
 
   @media (max-width: 380px) {
@@ -1059,7 +1052,7 @@
     /* Show sidebar actions, hide viewport/mobile actions on desktop */
     .sidebar-actions { display: grid; }
     .game-bottom { display: none; }
-    .mobile-actions { display: none !important; }
+    .mobile-actions-inline { display: none !important; }
 
     /* Desktop settings strip — full width bottom */
     .desktop-settings-strip {
@@ -1203,6 +1196,28 @@
         <div class="btn-content">Place Bet</div>
       </button>
 
+      <!-- Mobile Action Buttons (shown during game, hidden otherwise) -->
+      <div class="mobile-actions-inline">
+        <div class="action-buttons">
+          <button class="action-btn mobile-hit" onclick="document.getElementById('hitBtn').click()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-4 0v5"/><path d="M14 10V4a2 2 0 0 0-4 0v6"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8a6 6 0 0 0 12 0v-2a2 2 0 0 0-4 0"/></svg>
+            Hit
+          </button>
+          <button class="action-btn mobile-stand" onclick="document.getElementById('standBtn').click()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><rect x="8" y="8" width="8" height="8" rx="1"/></svg>
+            Stand
+          </button>
+          <button class="action-btn mobile-double" onclick="document.getElementById('doubleBtn').click()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="10" height="14" rx="1"/><rect x="12" y="4" width="10" height="14" rx="1"/></svg>
+            Double
+          </button>
+          <button class="action-btn mobile-split" onclick="document.getElementById('splitBtn').click()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22V8"/><path d="M21 3l-9 9"/><path d="M3 3l9 9"/></svg>
+            Split
+          </button>
+        </div>
+      </div>
+
       <!-- Sidebar Actions (desktop only) -->
       <div class="sidebar-actions">
         <button class="action-btn" id="hitBtn2" disabled>
@@ -1252,28 +1267,6 @@
             <button class="settings-toggle" id="turboToggle"></button>
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- Mobile Action Buttons (replaces bet controls during game) -->
-    <div class="mobile-actions">
-      <div class="action-buttons">
-        <button class="action-btn mobile-hit" onclick="document.getElementById('hitBtn').click()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-4 0v5"/><path d="M14 10V4a2 2 0 0 0-4 0v6"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8a6 6 0 0 0 12 0v-2a2 2 0 0 0-4 0"/></svg>
-          Hit
-        </button>
-        <button class="action-btn mobile-stand" onclick="document.getElementById('standBtn').click()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><rect x="8" y="8" width="8" height="8" rx="1"/></svg>
-          Stand
-        </button>
-        <button class="action-btn mobile-double" onclick="document.getElementById('doubleBtn').click()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="10" height="14" rx="1"/><rect x="12" y="4" width="10" height="14" rx="1"/></svg>
-          Double
-        </button>
-        <button class="action-btn mobile-split" onclick="document.getElementById('splitBtn').click()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22V8"/><path d="M21 3l-9 9"/><path d="M3 3l9 9"/></svg>
-          Split
-        </button>
       </div>
     </div>
 
