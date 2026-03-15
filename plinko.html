@@ -221,12 +221,14 @@
     pointer-events: none;
   }
 
-  /* ── Sidebar Plinko Settings (hidden on mobile) ── */
+  /* ── Plinko Settings (rows & risk) ── */
   .sidebar-plinko-settings {
-    display: none;
+    display: flex;
     flex-direction: column;
     gap: 12px;
   }
+
+  .game-bottom { display: none; }
 
   /* ── Bet Controls Wrapper ── */
   .bet-controls {
@@ -282,51 +284,38 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 14px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-xs);
+    padding: 10px 4px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .stat-row:last-child {
+    border-bottom: none;
   }
 
   .stat-label {
     font-size: 13px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    letter-spacing: 0.02em;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.4);
   }
 
-  .stat-value-wrap {
+  .stat-value {
     display: flex;
     align-items: center;
     gap: 2px;
   }
 
-  .stat-input {
-    width: 90px;
-    padding: 0;
-    border: none;
-    outline: none;
-    background: transparent;
+  .stat-number {
     font-family: 'Outfit', sans-serif;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     color: var(--text-primary);
-    text-align: right;
-    caret-color: var(--green-primary);
-    -moz-appearance: textfield;
-  }
-
-  .stat-input::-webkit-outer-spin-button,
-  .stat-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
   }
 
   .stat-suffix {
     font-family: 'Outfit', sans-serif;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
-    color: var(--text-secondary);
+    color: var(--text-primary);
   }
 
   /* ── Auto Bet Settings ── */
@@ -1192,6 +1181,12 @@
   }
 
   /* ── Responsive ── */
+  @media (max-width: 767px) {
+    .bet-controls .bet-button { order: -2; }
+    .bet-controls .input-group { order: -1; }
+    .bet-controls .sidebar-plinko-settings { order: 0; }
+  }
+
   @media (max-width: 380px) {
     .bet-input { font-size: 16px; }
     .bucket { font-size: 7px; }
@@ -1199,8 +1194,8 @@
 
   /* ══ Desktop Layout ══ */
   @media (min-width: 768px) {
-    .app-shell { max-width: 1200px; }
-    .header { padding: 14px 24px; }
+    .app-shell { max-width: none; border: none; }
+    .header { padding: 14px 24px; max-width: 1200px; width: 100%; margin: 0 auto; }
 
     .main-content {
       display: grid;
@@ -1208,6 +1203,9 @@
       grid-template-rows: 1fr auto;
       height: calc(100vh - 62px);
       max-height: 780px;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
       padding: 0 24px 24px;
       flex: none;
       min-height: 0;
@@ -1230,8 +1228,9 @@
     .input-group { order: 2; }
     .sidebar-plinko-settings { display: flex; order: 3; }
     .bet-button { order: 4; }
+    .stat-fields { order: 5; }
     .manual-settings { display: none; }
-    .autobet-settings { order: 5; }
+    .autobet-settings { order: 6; }
 
     /* Hide original settings bar on desktop */
     .settings-bar { display: none; }
@@ -1345,24 +1344,6 @@
 
     <!-- Bet Controls Wrapper -->
     <div class="bet-controls">
-      <!-- Plinko Settings (desktop sidebar version — hidden on mobile) -->
-      <div class="sidebar-plinko-settings">
-        <div class="plinko-setting">
-          <div class="plinko-setting-row">
-            <span class="plinko-setting-label">Rows</span>
-            <span class="plinko-setting-val" id="rowsValDesktop">16</span>
-          </div>
-          <div class="coin-slider-track">
-            <input type="range" class="coin-slider" id="rowsSliderDesktop" min="8" max="16" value="16">
-          </div>
-        </div>
-        <div class="risk-toggle">
-          <button class="risk-btn" data-risk="low">Low Risk</button>
-          <button class="risk-btn active" data-risk="medium">Medium Risk</button>
-          <button class="risk-btn" data-risk="high">High Risk</button>
-        </div>
-      </div>
-
       <!-- Bet Button -->
       <button class="bet-button" id="betBtn">
         <div class="btn-content">
@@ -1396,6 +1377,24 @@
         <div class="bet-error" id="betError">Bet amount exceeds your balance of $100.00</div>
       </div>
 
+      <!-- Plinko Settings (rows & risk) -->
+      <div class="sidebar-plinko-settings">
+        <div class="plinko-setting">
+          <div class="plinko-setting-row">
+            <span class="plinko-setting-label">Rows</span>
+            <span class="plinko-setting-val" id="rowsValDesktop">16</span>
+          </div>
+          <div class="coin-slider-track">
+            <input type="range" class="coin-slider" id="rowsSliderDesktop" min="8" max="16" value="16">
+          </div>
+        </div>
+        <div class="risk-toggle">
+          <button class="risk-btn" data-risk="low">Low Risk</button>
+          <button class="risk-btn active" data-risk="medium">Medium Risk</button>
+          <button class="risk-btn" data-risk="high">High Risk</button>
+        </div>
+      </div>
+
       <!-- Bet Mode Toggle -->
       <div class="bet-mode-toggle">
         <button class="bet-mode-btn active" data-mode="manual">Manual Bet</button>
@@ -1404,17 +1403,21 @@
 
       <!-- Manual Bet Settings (visible by default) -->
       <div class="manual-settings" id="manualSettings">
+      </div>
+
+      <!-- Stat display (always visible) -->
+      <div class="stat-fields">
         <div class="stat-row">
           <span class="stat-label">Max Multiplier</span>
-          <div class="stat-value-wrap">
-            <input class="stat-input" type="text" id="multInput" readonly>
+          <div class="stat-value">
+            <span class="stat-number" id="multInput">—</span>
             <span class="stat-suffix">x</span>
           </div>
         </div>
         <div class="stat-row">
           <span class="stat-label">Total Buckets</span>
-          <div class="stat-value-wrap">
-            <input class="stat-input" type="text" id="bucketsInput" readonly>
+          <div class="stat-value">
+            <span class="stat-number" id="bucketsInput">—</span>
           </div>
         </div>
       </div>
@@ -1637,8 +1640,8 @@
 
     // Update manual stats
     const maxMult = Math.max(...mults);
-    multInput.value = maxMult >= 1000 ? maxMult.toFixed(0) : maxMult;
-    bucketsInput.value = numBuckets;
+    multInput.textContent = maxMult >= 1000 ? maxMult.toFixed(0) : maxMult;
+    bucketsInput.textContent = numBuckets;
     updateWinDisplay();
   }
 
