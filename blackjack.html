@@ -417,37 +417,97 @@
 
   .action-btn {
     flex: 1;
-    padding: 10px 4px;
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: var(--radius-xs);
-    background: rgba(255,255,255,0.06);
-    color: rgba(255,255,255,0.5);
+    padding: 14px 8px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 100%);
+    box-shadow:
+      0 4px 8px rgba(0,0,0,0.4),
+      0 1px 3px rgba(0,0,0,0.3),
+      inset 0 1px 1px rgba(255,255,255,0.15),
+      inset 0 -1px 1px rgba(0,0,0,0.2);
+    color: rgba(255,255,255,0.6);
     font-family: 'Outfit', sans-serif;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     text-align: center;
     cursor: pointer;
     transition: all 0.15s ease;
-    backdrop-filter: blur(4px);
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 5px;
+    gap: 6px;
   }
 
   .action-btn svg {
-    width: 14px;
-    height: 14px;
-    opacity: 0.7;
+    width: 22px;
+    height: 22px;
+    opacity: 0.6;
   }
 
   .action-btn:hover:not(:disabled) {
-    border-color: rgba(255,255,255,0.3);
-    color: rgba(255,255,255,0.8);
+    background: linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 100%);
+    box-shadow:
+      0 4px 8px rgba(0,0,0,0.4),
+      0 1px 3px rgba(0,0,0,0.3),
+      inset 0 1px 1px rgba(255,255,255,0.2),
+      inset 0 -1px 1px rgba(0,0,0,0.2);
+    color: rgba(255,255,255,0.85);
   }
 
   .action-btn:active:not(:disabled) {
-    transform: scale(0.96);
+    transform: translateY(1px);
+    box-shadow:
+      0 2px 4px rgba(0,0,0,0.4),
+      0 1px 2px rgba(0,0,0,0.3),
+      inset 0 1px 2px rgba(0,0,0,0.2),
+      inset 0 -1px 1px rgba(255,255,255,0.05);
+    background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.08) 100%);
+  }
+
+  /* Hit - green */
+  #hitBtn, #hitBtn2 {
+    background: linear-gradient(180deg, rgba(0,171,76,0.25) 0%, rgba(0,171,76,0.08) 100%);
+    border: 1px solid rgba(0,171,76,0.2);
+    color: rgba(0,230,90,0.7);
+  }
+  #hitBtn:hover:not(:disabled), #hitBtn2:hover:not(:disabled) {
+    background: linear-gradient(180deg, rgba(0,171,76,0.35) 0%, rgba(0,171,76,0.12) 100%);
+    color: rgba(0,230,90,0.9);
+  }
+
+  /* Stand - red */
+  #standBtn, #standBtn2 {
+    background: linear-gradient(180deg, rgba(220,38,38,0.25) 0%, rgba(220,38,38,0.08) 100%);
+    border: 1px solid rgba(220,38,38,0.2);
+    color: rgba(248,113,113,0.7);
+  }
+  #standBtn:hover:not(:disabled), #standBtn2:hover:not(:disabled) {
+    background: linear-gradient(180deg, rgba(220,38,38,0.35) 0%, rgba(220,38,38,0.12) 100%);
+    color: rgba(248,113,113,0.9);
+  }
+
+  /* Double - yellow */
+  #doubleBtn, #doubleBtn2 {
+    background: linear-gradient(180deg, rgba(234,179,8,0.25) 0%, rgba(234,179,8,0.08) 100%);
+    border: 1px solid rgba(234,179,8,0.2);
+    color: rgba(250,204,21,0.7);
+  }
+  #doubleBtn:hover:not(:disabled), #doubleBtn2:hover:not(:disabled) {
+    background: linear-gradient(180deg, rgba(234,179,8,0.35) 0%, rgba(234,179,8,0.12) 100%);
+    color: rgba(250,204,21,0.9);
+  }
+
+  /* Split - blue */
+  #splitBtn, #splitBtn2 {
+    background: linear-gradient(180deg, rgba(59,130,246,0.25) 0%, rgba(59,130,246,0.08) 100%);
+    border: 1px solid rgba(59,130,246,0.2);
+    color: rgba(96,165,250,0.7);
+  }
+  #splitBtn:hover:not(:disabled), #splitBtn2:hover:not(:disabled) {
+    background: linear-gradient(180deg, rgba(59,130,246,0.35) 0%, rgba(59,130,246,0.12) 100%);
+    color: rgba(96,165,250,0.9);
   }
 
   .action-btn:disabled {
@@ -907,6 +967,16 @@
     .bet-controls .bet-button { order: -1; }
     .input-group .bet-amount-label { order: -2; }
     .input-group .chip-row { order: -1; }
+    .card { width: 68px; height: 96px; }
+    .card .card-rank { font-size: 20px; }
+    .card .card-suit { font-size: 22px; }
+    .action-buttons {
+      flex-wrap: wrap;
+    }
+    .action-buttons .action-btn {
+      flex: 1 1 calc(50% - 3px);
+      min-width: calc(50% - 3px);
+    }
   }
 
   @media (max-width: 380px) {
@@ -1045,7 +1115,7 @@
       <div class="game-bottom">
         <div class="action-buttons">
           <button class="action-btn" id="hitBtn" disabled>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-4 0v5"/><path d="M14 10V4a2 2 0 0 0-4 0v6"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8a6 6 0 0 0 12 0v-2a2 2 0 0 0-4 0"/></svg>
             Hit
           </button>
           <button class="action-btn" id="standBtn" disabled>
@@ -1099,7 +1169,7 @@
       <!-- Sidebar Actions (desktop only) -->
       <div class="sidebar-actions">
         <button class="action-btn" id="hitBtn2" disabled>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-4 0v5"/><path d="M14 10V4a2 2 0 0 0-4 0v6"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8a6 6 0 0 0 12 0v-2a2 2 0 0 0-4 0"/></svg>
           Hit
         </button>
         <button class="action-btn" id="standBtn2" disabled>
