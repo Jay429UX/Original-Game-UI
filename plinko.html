@@ -882,31 +882,31 @@
 
   .risk-toggle-btns {
     display: flex;
-    background: rgba(0, 0, 0, 0.55);
+    background: var(--surface);
     border-radius: var(--radius-sm);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border);
     overflow: hidden;
-    padding: 3px;
-    gap: 3px;
+    padding: 4px;
+    gap: 4px;
   }
 
   .risk-btn {
     flex: 1;
-    padding: 8px 8px;
+    padding: 9px 10px;
     border: none;
     border-radius: var(--radius-xs);
     background: transparent;
-    color: rgba(255, 255, 255, 0.4);
+    color: var(--text-muted);
     font-family: 'Outfit', sans-serif;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.15s ease;
   }
 
   .risk-btn.active {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
+    background: var(--surface-raised);
+    color: var(--text-primary);
   }
 
   .risk-btn:hover:not(.active) {
