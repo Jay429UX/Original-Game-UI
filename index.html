@@ -232,6 +232,7 @@
     place-items: center;
   }
 
+
   .viewport-dice.win-result .dice-shape-fill {
     fill: rgba(0, 171, 76, 0.15);
     stroke: var(--green-primary);
@@ -1229,6 +1230,10 @@
 
   /* ── Responsive ── */
   @media (max-width: 767px) {
+    .game-viewport .game-content {
+      flex: 1;
+      justify-content: center;
+    }
     .viewport-dice {
       width: 56px;
       height: 68px;
