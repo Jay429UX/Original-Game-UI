@@ -903,6 +903,12 @@
   .nav-item:hover:not(.active) { color: var(--text-secondary); }
 
   /* ── Responsive ── */
+  @media (max-width: 767px) {
+    .bet-controls .bet-button { order: -1; }
+    .input-group .bet-amount-label { order: -2; }
+    .input-group .chip-row { order: -1; }
+  }
+
   @media (max-width: 380px) {
     .card { width: 58px; height: 82px; }
     .card .card-rank { font-size: 17px; }
@@ -912,8 +918,8 @@
 
   /* ══ Desktop Layout ══ */
   @media (min-width: 768px) {
-    .app-shell { max-width: 1200px; }
-    .header { padding: 14px 24px; }
+    .app-shell { max-width: none; border: none; }
+    .header { padding: 14px 24px; max-width: 1200px; width: 100%; margin: 0 auto; }
 
     .main-content {
       display: grid;
@@ -921,6 +927,9 @@
       grid-template-rows: 1fr auto;
       height: calc(100vh - 62px);
       max-height: 780px;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
       padding: 0 24px 24px;
       flex: none;
       min-height: 0;
