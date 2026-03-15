@@ -1909,7 +1909,58 @@
     }, 800);
   }
 
-  document.getElementById('betBtn').addEventListener('click', rollDice);
+  // ── Autobet state ──
+  let autobetRunning = false;
+  let autobetTimer = null;
+  let autobetRemaining = 0;
+
+  function getAutobetSettings() {
+    const numBetsInput = document.getElementById('numBets');
+    const numBets = numBetsInput.value === '' ? Infinity : parseInt(numBetsInput.value) || 10;
+    return { numBets };
+  }
+
+  function stopAutobet() {
+    autobetRunning = false;
+    if (autobetTimer) { clearTimeout(autobetTimer); autobetTimer = null; }
+    const btnEl = document.getElementById('betBtn');
+    btnEl.querySelector('.btn-content').textContent = 'Start Autobet';
+  }
+
+  function runAutobetRound() {
+    if (!autobetRunning || autobetRemaining <= 0) { stopAutobet(); return; }
+
+    rollDice();
+    autobetRemaining--;
+
+    if (autobetRemaining <= 0) {
+      // Let the last animation finish then stop
+      diceResetTimer = setTimeout(() => { stopAutobet(); }, 800);
+      return;
+    }
+
+    // Wait for dice animation to finish then run next round
+    autobetTimer = setTimeout(runAutobetRound, 1200);
+  }
+
+  function startAutobet() {
+    const settings = getAutobetSettings();
+    autobetRunning = true;
+    autobetRemaining = settings.numBets;
+    const btnEl = document.getElementById('betBtn');
+    btnEl.querySelector('.btn-content').textContent = 'Stop Autobet';
+    runAutobetRound();
+  }
+
+  document.getElementById('betBtn').addEventListener('click', () => {
+    const isAuto = document.querySelector('.bet-mode-btn.active')?.dataset.mode === 'auto';
+    if (isAuto) {
+      if (autobetRunning) stopAutobet();
+      else startAutobet();
+    } else {
+      rollDice();
+    }
+  });
 
   // ── Bet mode toggle ──
   const autobetPanel = document.getElementById('autobetSettings');
