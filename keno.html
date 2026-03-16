@@ -1132,6 +1132,52 @@
   .rakeback-pill img {
     border-radius: 4px;
   }
+  .rakeback-pill { cursor: pointer; position: relative; }
+  .rakeback-popup {
+    position: fixed;
+    background: var(--surface-raised, #161816);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius, 8px);
+    padding: 16px;
+    min-width: 200px;
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+  .rakeback-popup.visible { display: flex; }
+  .rakeback-popup-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.45);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .rakeback-popup-amount {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary, #e8eee8);
+  }
+  .rakeback-claim-btn {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: var(--radius-sm, 8px);
+    background: var(--green-primary, #00ab4c);
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+  }
+  .rakeback-claim-btn:hover { opacity: 0.9; }
+  .rakeback-claim-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 
   .result-pill-track {
     display: flex;
@@ -1342,6 +1388,11 @@
         <div class="rakeback-pill">
           <img src="assets/Rakeboost.svg" alt="Rakeback" width="18" height="18">
           <span id="rakebackVal">$0.00</span>
+          <div class="rakeback-popup" id="rakebackPopup">
+            <span class="rakeback-popup-title">Rakeback Balance</span>
+            <span class="rakeback-popup-amount" id="rakebackPopupAmount">$0.00</span>
+            <button class="rakeback-claim-btn" id="rakebackClaimBtn" disabled>Claim</button>
+          </div>
         </div>
       </div>
       <div class="game-content">
@@ -1592,7 +1643,17 @@
   const TOTAL_TILES = 40;
   const DRAW_COUNT = 10;
   const MAX_PICKS = 10;
-  const balance = 100;
+  let balance = 100;
+  const balanceEl = document.querySelector('.balance-pill');
+  let rakebackTotal = 0;
+  const rakebackVal = document.getElementById('rakebackVal');
+
+  function addRakeback(bet) {
+    const rb = bet * 0.005;
+    rakebackTotal = Math.round((rakebackTotal + rb) * 100) / 100;
+    rakebackVal.textContent = '$' + rakebackTotal.toFixed(2);
+  }
+
   let currentRisk = 'classic';
   let selectedTiles = new Set();
   let isDrawing = false;
@@ -1743,6 +1804,7 @@
     }
     if (!validateBet()) return;
 
+    addRakeback(parseFloat(betInput.value) || 0);
     isDrawing = true;
 
     // Lock all tiles
@@ -2159,6 +2221,40 @@
     turboSettingsToggle.classList.toggle('active', turboMode);
     // Sync with autobet turbo toggle if present
     if (autobetTurboToggle) autobetTurboToggle.classList.toggle('active', turboMode);
+  });
+
+  // ── Rakeback Popup ──
+  const rakebackPill = document.querySelector('.rakeback-pill');
+  const rakebackPopup = document.getElementById('rakebackPopup');
+  const rakebackPopupAmount = document.getElementById('rakebackPopupAmount');
+  const rakebackClaimBtn = document.getElementById('rakebackClaimBtn');
+
+  rakebackPill.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isVisible = rakebackPopup.classList.toggle('visible');
+    if (isVisible) {
+      const rect = rakebackPill.getBoundingClientRect();
+      rakebackPopup.style.top = (rect.bottom + 8) + 'px';
+      rakebackPopup.style.right = (window.innerWidth - rect.right) + 'px';
+      rakebackPopupAmount.textContent = rakebackVal.textContent;
+      rakebackClaimBtn.disabled = rakebackTotal <= 0;
+    }
+  });
+
+  rakebackClaimBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (rakebackTotal <= 0) return;
+    balance = Math.round((balance + rakebackTotal) * 100) / 100;
+    balanceEl.textContent = balance.toFixed(2);
+    rakebackTotal = 0;
+    rakebackVal.textContent = '$0.00';
+    rakebackPopupAmount.textContent = '$0.00';
+    rakebackClaimBtn.disabled = true;
+    rakebackPopup.classList.remove('visible');
+  });
+
+  document.addEventListener('click', () => {
+    rakebackPopup.classList.remove('visible');
   });
 
   // ── Init ──
