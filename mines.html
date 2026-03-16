@@ -642,6 +642,44 @@
     gap: 6px;
   }
 
+  .grid-size-toggle {
+    display: flex;
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+    padding: 4px;
+    gap: 4px;
+  }
+
+  .grid-size-btn {
+    flex: 1;
+    padding: 9px 6px;
+    border: none;
+    border-radius: var(--radius-xs);
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .grid-size-btn.active {
+    background: var(--surface-raised);
+    color: var(--text-primary);
+  }
+
+  .grid-size-btn:hover:not(.active):not(:disabled) {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .grid-size-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
   .mines-count-row {
     display: flex;
     align-items: center;
@@ -754,7 +792,7 @@
     grid-template-columns: repeat(5, 1fr);
     gap: 8px;
     width: 100%;
-    max-width: 350px;
+    max-width: 400px;
   }
 
   .mine-tile {
@@ -1385,6 +1423,17 @@
         <div class="bet-error" id="betError">Bet amount exceeds your balance of $100.00</div>
       </div>
 
+      <!-- Grid Size Toggle -->
+      <div class="mines-count-group">
+        <span class="mines-count-label">Grid Size</span>
+        <div class="grid-size-toggle">
+          <button class="grid-size-btn active" data-size="25">5×5</button>
+          <button class="grid-size-btn" data-size="36">6×6</button>
+          <button class="grid-size-btn" data-size="49">7×7</button>
+          <button class="grid-size-btn" data-size="64">8×8</button>
+        </div>
+      </div>
+
       <!-- Mines Count Slider -->
       <div class="mines-count-group">
         <div class="mines-count-row">
@@ -1574,7 +1623,8 @@
   const cashoutMult = document.getElementById('cashoutMult');
 
   // == Game Constants ==
-  const GRID_SIZE = 25;
+  let GRID_SIZE = 25;
+  let GRID_COLS = 5;
 
   // == Game State ==
   let balance = 100;
@@ -1686,6 +1736,7 @@
       // Re-enable controls
       minesSlider.disabled = false;
       betInput.disabled = false;
+      document.querySelectorAll('.grid-size-btn').forEach(b => b.disabled = false);
 
       // Reset after delay
       const resetDelay = turboMode ? 600 : 1500;
@@ -1790,6 +1841,7 @@
     // Re-enable controls
     minesSlider.disabled = false;
     betInput.disabled = false;
+    document.querySelectorAll('.grid-size-btn').forEach(b => b.disabled = false);
 
     // Reset after delay
     const resetDelay = turboMode ? 800 : 2000;
@@ -1850,6 +1902,7 @@
     // Disable controls during game
     minesSlider.disabled = true;
     betInput.disabled = true;
+    document.querySelectorAll('.grid-size-btn').forEach(b => b.disabled = true);
 
     updateMultiplierDisplay();
   }
@@ -1905,6 +1958,27 @@
   betInput.addEventListener('input', () => {
     clearError();
     updateMultiplierDisplay();
+  });
+
+  // == Grid Size Toggle ==
+  document.querySelectorAll('.grid-size-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (gameState !== 'idle') return;
+      document.querySelectorAll('.grid-size-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      GRID_SIZE = parseInt(btn.dataset.size);
+      GRID_COLS = Math.sqrt(GRID_SIZE);
+      minesBoard.style.gridTemplateColumns = `repeat(${GRID_COLS}, 1fr)`;
+      // Update mines slider max
+      minesSlider.max = GRID_SIZE - 1;
+      if (numMines >= GRID_SIZE) {
+        numMines = GRID_SIZE - 1;
+        minesSlider.value = numMines;
+        minesCountVal.textContent = numMines;
+      }
+      generateBoard();
+      updateMultiplierDisplay();
+    });
   });
 
   // == Mines Slider ==
@@ -2044,6 +2118,7 @@
     betBtnEl.style.background = '';
     minesSlider.disabled = false;
     betInput.disabled = false;
+    document.querySelectorAll('.grid-size-btn').forEach(b => b.disabled = false);
   }
 
   function runNextAutoBet() {
