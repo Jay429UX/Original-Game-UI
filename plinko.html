@@ -1426,23 +1426,6 @@
       <div class="manual-settings" id="manualSettings">
       </div>
 
-      <!-- Stat display (always visible) -->
-      <div class="stat-fields">
-        <div class="stat-row">
-          <span class="stat-label">Max Multiplier</span>
-          <div class="stat-value">
-            <span class="stat-number" id="multInput">—</span>
-            <span class="stat-suffix">x</span>
-          </div>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">Total Buckets</span>
-          <div class="stat-value">
-            <span class="stat-number" id="bucketsInput">—</span>
-          </div>
-        </div>
-      </div>
-
       <!-- Auto Bet Settings (hidden by default) -->
       <div class="autobet-settings" id="autobetSettings" style="display:none">
 
@@ -1661,8 +1644,8 @@
 
     // Update manual stats
     const maxMult = Math.max(...mults);
-    multInput.textContent = maxMult >= 1000 ? maxMult.toFixed(0) : maxMult;
-    bucketsInput.textContent = numBuckets;
+    if (multInput) multInput.textContent = maxMult >= 1000 ? maxMult.toFixed(0) : maxMult;
+    if (bucketsInput) bucketsInput.textContent = numBuckets;
     updateWinDisplay();
   }
 

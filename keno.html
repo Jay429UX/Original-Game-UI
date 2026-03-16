@@ -813,21 +813,21 @@
   /* ── Risk Toggle ── */
   .risk-toggle {
     display: flex;
-    background: rgba(0, 0, 0, 0.55);
+    background: var(--surface);
     border-radius: var(--radius-sm);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.05);
     overflow: hidden;
-    padding: 3px;
-    gap: 3px;
+    padding: 4px;
+    gap: 4px;
   }
 
   .risk-btn {
     flex: 1;
-    padding: 12px 6px;
+    padding: 9px 6px;
     border: none;
     border-radius: var(--radius-xs);
     background: transparent;
-    color: rgba(255, 255, 255, 0.4);
+    color: var(--text-secondary);
     font-family: 'Outfit', sans-serif;
     font-size: 13px;
     font-weight: 600;
@@ -836,8 +836,8 @@
   }
 
   .risk-btn.active {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
+    background: var(--surface-raised);
+    color: var(--text-primary);
   }
 
   .risk-btn:hover:not(.active) {
@@ -1210,9 +1210,25 @@
   }
 
   /* ── Responsive ── */
+  @media (max-width: 767px) {
+    .game-viewport {
+      height: auto;
+      max-height: calc(100dvh - 50px - 70px - 48px - 200px);
+      padding: 8px 6px 0;
+    }
+    .keno-board {
+      gap: 4px;
+      max-width: 320px;
+    }
+    .keno-tile {
+      font-size: 12px;
+    }
+  }
+
   @media (max-width: 380px) {
     .bet-input { font-size: 16px; }
     .keno-tile { font-size: 11px; }
+    .keno-board { gap: 3px; max-width: 280px; }
   }
 
   /* ══ Desktop Layout ══ */
@@ -1488,12 +1504,6 @@
             <div class="currency-tag">$</div>
             <input class="autobet-input autobet-stop-input" type="number" placeholder="0.00" step="0.01" min="0" id="stopLoss">
           </div>
-        </div>
-
-        <!-- Turbo -->
-        <div class="turbo-row">
-          <span class="turbo-label">Turbo</span>
-          <button class="turbo-toggle" id="turboToggle"></button>
         </div>
 
       </div>
@@ -2109,14 +2119,15 @@
     });
   });
 
-  // ── Turbo Toggle (autobet panel) ──
+  // ── Turbo Toggle (autobet panel - removed, now only in settings) ──
   const autobetTurboToggle = document.getElementById('turboToggle');
-  autobetTurboToggle.addEventListener('click', function() {
-    turboMode = !turboMode;
-    this.classList.toggle('active', turboMode);
-    // Sync with settings popup toggle
-    if (turboSettingsToggle) turboSettingsToggle.classList.toggle('active', turboMode);
-  });
+  if (autobetTurboToggle) {
+    autobetTurboToggle.addEventListener('click', function() {
+      turboMode = !turboMode;
+      this.classList.toggle('active', turboMode);
+      if (turboSettingsToggle) turboSettingsToggle.classList.toggle('active', turboMode);
+    });
+  }
 
   // ── Settings Popup ──
   let soundEnabled = false;
@@ -2146,8 +2157,8 @@
   turboSettingsToggle.addEventListener('click', () => {
     turboMode = !turboMode;
     turboSettingsToggle.classList.toggle('active', turboMode);
-    // Sync with autobet turbo toggle
-    autobetTurboToggle.classList.toggle('active', turboMode);
+    // Sync with autobet turbo toggle if present
+    if (autobetTurboToggle) autobetTurboToggle.classList.toggle('active', turboMode);
   });
 
   // ── Init ──
