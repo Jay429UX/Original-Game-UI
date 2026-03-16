@@ -1295,9 +1295,11 @@
     /* Desktop sidebar reorder */
     .bet-mode-toggle { order: 1; }
     .input-group { order: 2; }
-    .bet-button { order: 3; }
-    .manual-settings { order: 4; }
-    .autobet-settings { order: 4; }
+    .coin-selector { order: 3; }
+    .coin-settings-group { order: 4; }
+    .bet-button { order: 5; }
+    .manual-settings { order: 6; }
+    .autobet-settings { order: 6; }
 
     /* Hide original settings bar on desktop */
     .settings-bar { display: none; }
@@ -1378,38 +1380,7 @@
         </div>
       </div>
 
-      <!-- Coinflip Controls -->
-      <div class="game-bottom">
-        <!-- Heads / Tails selector -->
-        <div class="coin-selector">
-          <button class="option-chip active" data-side="heads">🪙 Heads</button>
-          <button class="option-chip" data-side="tails">🪙 Tails</button>
-        </div>
-
-        <div class="coin-settings-group">
-          <!-- Number of Coins -->
-          <div class="coin-setting">
-            <div class="coin-setting-row">
-              <span class="coin-setting-label">Number of Coins</span>
-              <span class="coin-setting-val" id="numCoinsVal">1</span>
-            </div>
-            <div class="coin-slider-track">
-              <input type="range" class="slider-range coin-slider" id="numCoins" min="1" max="10" value="1">
-            </div>
-          </div>
-
-          <!-- Minimum to Win -->
-          <div class="coin-setting">
-            <div class="coin-setting-row">
-              <span class="coin-setting-label">Minimum to Win</span>
-              <span class="coin-setting-val" id="minWinVal">1</span>
-            </div>
-            <div class="coin-slider-track">
-              <input type="range" class="slider-range coin-slider" id="minWin" min="1" max="1" value="1">
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Coinflip Controls (moved to sidebar) -->
     </div>
 
     <!-- Bet Controls Wrapper -->
@@ -1420,6 +1391,12 @@
           Bet Now
         </div>
       </button>
+
+      <!-- Heads / Tails selector -->
+      <div class="coin-selector">
+        <button class="option-chip active" data-side="heads">🪙 Heads</button>
+        <button class="option-chip" data-side="tails">🪙 Tails</button>
+      </div>
 
       <!-- Bet Amount Input -->
       <div class="input-group">
@@ -1442,6 +1419,28 @@
             <button class="quick-btn" data-action="half">½</button>
             <button class="quick-btn" data-action="double">2×</button>
             <button class="quick-btn" data-action="max">Max</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Coin Settings -->
+      <div class="coin-settings-group">
+        <div class="coin-setting">
+          <div class="coin-setting-row">
+            <span class="coin-setting-label">Number of Coins</span>
+            <span class="coin-setting-val" id="numCoinsVal">1</span>
+          </div>
+          <div class="coin-slider-track">
+            <input type="range" class="slider-range coin-slider" id="numCoins" min="1" max="10" value="1">
+          </div>
+        </div>
+        <div class="coin-setting">
+          <div class="coin-setting-row">
+            <span class="coin-setting-label">Minimum to Win</span>
+            <span class="coin-setting-val" id="minWinVal">1</span>
+          </div>
+          <div class="coin-slider-track">
+            <input type="range" class="slider-range coin-slider" id="minWin" min="1" max="1" value="1">
           </div>
         </div>
       </div>
