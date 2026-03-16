@@ -218,8 +218,8 @@
   }
   /* Mobile order for bet controls */
   .bet-controls .bet-button { order: 1; }
-  .bet-controls .mines-count-group { order: 2; }
-  .bet-controls .input-group { order: 3; }
+  .bet-controls .input-group { order: 2; }
+  .bet-controls .mines-count-group { order: 3; }
   .bet-controls .bet-mode-toggle { order: 4; }
   .bet-controls .manual-settings { order: 5; }
   .bet-controls .autobet-settings { order: 5; }
@@ -693,6 +693,10 @@
     font-size: 13px;
     white-space: nowrap;
     flex-shrink: 0;
+    background: var(--surface);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-sm);
+    padding: 6px 10px;
   }
 
   .mines-slider-label .mines-count-val {
@@ -705,6 +709,10 @@
   .mines-slider-row .coin-slider-track {
     flex: 1;
     min-width: 0;
+  }
+
+  .mines-slider-track::before {
+    display: none !important;
   }
 
   .coin-slider-track {
@@ -755,7 +763,7 @@
     border: 2px solid #00c956;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
     cursor: pointer;
-    margin-top: -8px;
+    margin-top: -10px;
     transition: box-shadow 0.15s ease;
   }
 
@@ -1443,12 +1451,13 @@
 
       <!-- Mines Count Slider -->
       <div class="mines-count-group">
+        <div class="input-label"><span>Mines / Gems</span></div>
         <div class="mines-slider-row">
-          <div class="mines-slider-label">💣 <span class="mines-count-val" id="minesCountVal">3</span></div>
-          <div class="coin-slider-track">
+          <div class="mines-slider-label bombs-label">💣 <span class="mines-count-val" id="minesCountVal">3</span></div>
+          <div class="coin-slider-track mines-slider-track">
             <input type="range" class="coin-slider" id="minesSlider" min="1" max="24" value="3">
           </div>
-          <div class="mines-slider-label">💎 <span class="mines-count-val" id="gemsCountVal">22</span></div>
+          <div class="mines-slider-label gems-label">💎 <span class="mines-count-val" id="gemsCountVal">22</span></div>
         </div>
       </div>
 
@@ -2000,15 +2009,39 @@
       gemsCountVal.textContent = GRID_SIZE - numMines;
       document.getElementById('autoRevealCount').max = GRID_SIZE - numMines;
       generateBoard();
+      updateSliderTrack();
       updateMultiplierDisplay();
     });
   });
+
+  // == Mines Slider Track Color ==
+  function updateSliderTrack() {
+    const min = parseInt(minesSlider.min);
+    const max = parseInt(minesSlider.max);
+    const val = parseInt(minesSlider.value);
+    // ratio: 0 = far left (1 mine), 1 = far right (max mines)
+    const ratio = (val - min) / (max - min);
+    // Browser positions thumb center from (thumbW/2) to (trackW - thumbW/2)
+    const thumbW = 12;
+    const trackW = minesSlider.offsetWidth || 200;
+    const usable = trackW - thumbW;
+    const thumbCenterPx = thumbW / 2 + ratio * usable;
+    const pct = (thumbCenterPx / trackW) * 100;
+    // Red (mines) left of thumb, green (gems) right of thumb
+    minesSlider.style.background = `linear-gradient(to right, #e74c3c ${pct}%, #00ab4c ${pct}%) no-repeat center`;
+    minesSlider.style.backgroundSize = '100% 8px';
+    minesSlider.style.borderRadius = '4px';
+  }
+  updateSliderTrack();
+  // Recalculate on resize so track stays aligned
+  window.addEventListener('resize', updateSliderTrack);
 
   // == Mines Slider ==
   minesSlider.addEventListener('input', () => {
     numMines = parseInt(minesSlider.value);
     minesCountVal.textContent = numMines;
     gemsCountVal.textContent = GRID_SIZE - numMines;
+    updateSliderTrack();
     updateMultiplierDisplay();
   });
 
