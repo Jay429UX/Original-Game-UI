@@ -1437,11 +1437,15 @@
       <!-- Mines Count Slider -->
       <div class="mines-count-group">
         <div class="mines-count-row">
-          <span class="mines-count-label">Mines</span>
+          <span class="mines-count-label">💣 Mines</span>
           <span class="mines-count-val" id="minesCountVal">3</span>
         </div>
         <div class="coin-slider-track">
           <input type="range" class="coin-slider" id="minesSlider" min="1" max="24" value="3">
+        </div>
+        <div class="mines-count-row">
+          <span class="mines-count-label">💎 Gems</span>
+          <span class="mines-count-val" id="gemsCountVal">22</span>
         </div>
       </div>
 
@@ -1471,6 +1475,19 @@
 
       <!-- Auto Bet Settings (hidden by default) -->
       <div class="autobet-settings" id="autobetSettings" style="display:none">
+
+        <!-- Tiles to Reveal -->
+        <div class="autobet-field">
+          <span class="autobet-label">Tiles to Reveal</span>
+          <div class="autobet-input-row">
+            <input class="autobet-input" type="number" id="autoRevealCount" value="1" min="1" max="24" placeholder="1">
+            <div class="autobet-chips">
+              <button class="autobet-chip auto-reveal-chip" data-reveals="1">1</button>
+              <button class="autobet-chip auto-reveal-chip" data-reveals="3">3</button>
+              <button class="autobet-chip auto-reveal-chip" data-reveals="5">5</button>
+            </div>
+          </div>
+        </div>
 
         <!-- Number of Bets -->
         <div class="autobet-field">
@@ -1618,6 +1635,7 @@
   const balanceDisplay = document.getElementById('balanceDisplay');
   const minesSlider = document.getElementById('minesSlider');
   const minesCountVal = document.getElementById('minesCountVal');
+  const gemsCountVal = document.getElementById('gemsCountVal');
   const cashoutOverlay = document.getElementById('cashoutOverlay');
   const cashoutAmount = document.getElementById('cashoutAmount');
   const cashoutMult = document.getElementById('cashoutMult');
@@ -1976,6 +1994,8 @@
         minesSlider.value = numMines;
         minesCountVal.textContent = numMines;
       }
+      gemsCountVal.textContent = GRID_SIZE - numMines;
+      document.getElementById('autoRevealCount').max = GRID_SIZE - numMines;
       generateBoard();
       updateMultiplierDisplay();
     });
@@ -1985,6 +2005,7 @@
   minesSlider.addEventListener('input', () => {
     numMines = parseInt(minesSlider.value);
     minesCountVal.textContent = numMines;
+    gemsCountVal.textContent = GRID_SIZE - numMines;
     updateMultiplierDisplay();
   });
 
@@ -2097,9 +2118,11 @@
     autobetOriginalBet = parseFloat(betInput.value) || 0;
     autobetRunning = true;
 
-    // For autobet in mines, auto-reveal a random number of safe tiles (1 to safeTiles-1)
-    // Use a conservative approach: reveal 1 tile per round for safety
-    autobetRevealTarget = 1;
+    // Read tiles to reveal from input
+    autobetRevealTarget = parseInt(document.getElementById('autoRevealCount').value) || 1;
+    const maxReveals = GRID_SIZE - numMines;
+    if (autobetRevealTarget >= maxReveals) autobetRevealTarget = maxReveals - 1;
+    if (autobetRevealTarget < 1) autobetRevealTarget = 1;
 
     // Read on win/loss settings
     const winSeg = document.querySelector('.autobet-seg-btn.active[data-target="onWin"]');
@@ -2147,30 +2170,49 @@
   function autoRevealTiles() {
     if (gameState !== 'active') return;
 
-    const tiles = minesBoard.querySelectorAll('.mine-tile');
-    const unrevealed = [];
-    tiles.forEach((t, i) => {
-      if (t.classList.contains('clickable') && !t.classList.contains('revealed-safe') && !t.classList.contains('revealed-mine')) {
-        unrevealed.push(i);
-      }
-    });
+    let revealed = 0;
+    const delay = turboMode ? 100 : 300;
 
-    if (unrevealed.length === 0) return;
-
-    // Pick a random unrevealed tile
-    const randomIndex = unrevealed[Math.floor(Math.random() * unrevealed.length)];
-    revealTile(randomIndex);
-
-    // If game is still active and we want to reveal more, continue
-    // For autobet we just reveal 1 and then cash out
-    if (gameState === 'active' && revealedCount > 0) {
-      const delay = turboMode ? 150 : 400;
-      setTimeout(() => {
+    function revealNext() {
+      if (gameState !== 'active' || revealed >= autobetRevealTarget) {
+        // Done revealing, cash out
         if (gameState === 'active') {
-          cashOut();
+          setTimeout(() => {
+            if (gameState === 'active') cashOut();
+          }, delay);
         }
-      }, delay);
+        return;
+      }
+
+      const tiles = minesBoard.querySelectorAll('.mine-tile');
+      const unrevealed = [];
+      tiles.forEach((t, i) => {
+        if (!t.classList.contains('revealed-safe') && !t.classList.contains('revealed-mine')) {
+          unrevealed.push(i);
+        }
+      });
+
+      if (unrevealed.length === 0) return;
+
+      const randomIndex = unrevealed[Math.floor(Math.random() * unrevealed.length)];
+      revealTile(randomIndex);
+      revealed++;
+
+      // If hit a mine, game state changed - stop
+      if (gameState !== 'active') return;
+
+      // Reveal next tile after delay
+      if (revealed < autobetRevealTarget) {
+        setTimeout(revealNext, delay);
+      } else {
+        // All tiles revealed, cash out
+        setTimeout(() => {
+          if (gameState === 'active') cashOut();
+        }, delay);
+      }
     }
+
+    revealNext();
   }
 
   function handleAutobetResult(multiplier) {
@@ -2220,11 +2262,18 @@
   }
 
   // == Autobet Number Chips ==
-  document.querySelectorAll('.autobet-chip').forEach(chip => {
+  document.querySelectorAll('.autobet-chip[data-bets]').forEach(chip => {
     chip.addEventListener('click', () => {
       const v = chip.dataset.bets;
       document.getElementById('numBets').value = v === 'Infinity' ? '' : v;
       if (v === 'Infinity') document.getElementById('numBets').placeholder = '\u221E';
+    });
+  });
+
+  // == Auto Reveal Chips ==
+  document.querySelectorAll('.auto-reveal-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.getElementById('autoRevealCount').value = chip.dataset.reveals;
     });
   });
 
