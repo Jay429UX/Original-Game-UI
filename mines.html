@@ -968,6 +968,16 @@
     font-size: 13px;
     font-weight: 500;
     color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .settings-popup-label .settings-icon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.7;
+    flex-shrink: 0;
   }
 
   .settings-toggle {
@@ -1353,6 +1363,190 @@
     .bottom-nav { display: none; }
     .header-casino-link { display: inline-flex; }
   }
+
+  /* -- Provably Fair Modal -- */
+  .fairness-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .fairness-overlay.visible { display: flex; }
+
+  .fairness-modal {
+    background: #161816;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 32px;
+    position: relative;
+  }
+
+  .fairness-modal::-webkit-scrollbar { width: 4px; }
+  .fairness-modal::-webkit-scrollbar-track { background: transparent; }
+  .fairness-modal::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+  .fairness-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    background: transparent;
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .fairness-close:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.05);
+  }
+  .fairness-close svg { width: 16px; height: 16px; }
+
+  .fairness-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    padding-right: 40px;
+  }
+
+  .fairness-desc {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin-bottom: 28px;
+  }
+  .fairness-desc a {
+    color: var(--text-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .fairness-section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+  }
+
+  .fairness-field-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  .fairness-field-value {
+    background: var(--surface);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--text-secondary);
+    word-break: break-all;
+    margin-bottom: 20px;
+    user-select: all;
+  }
+
+  .fairness-input-wrap {
+    position: relative;
+    margin-bottom: 20px;
+  }
+  .fairness-input-wrap input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius);
+    padding: 14px 48px 14px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--text-secondary);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .fairness-input-wrap input:focus {
+    border-color: var(--border-focus);
+  }
+  .fairness-input-wrap input::placeholder {
+    color: var(--text-muted);
+  }
+  .fairness-refresh-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s;
+  }
+  .fairness-refresh-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+  }
+  .fairness-refresh-btn svg { width: 16px; height: 16px; }
+
+  .fairness-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.06);
+    margin: 8px 0 24px;
+  }
+
+  .fairness-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .fairness-btn {
+    flex: 1;
+    padding: 14px 20px;
+    border-radius: var(--radius);
+    border: none;
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .fairness-btn:active { transform: scale(0.98); }
+  .fairness-btn.primary {
+    background: var(--green-primary);
+    color: #fff;
+  }
+  .fairness-btn.primary:hover { opacity: 0.9; }
+  .fairness-btn.secondary {
+    background: var(--surface);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+  }
+  .fairness-btn.secondary:hover { background: var(--surface-raised); }
+  .fairness-btn svg { width: 16px; height: 16px; }
 </style>
 </head>
 <body>
@@ -1584,12 +1778,25 @@
       <div class="settings-popup" id="settingsPopup">
         <div class="settings-popup-title">Settings</div>
         <div class="settings-popup-row">
-          <span class="settings-popup-label">Sound</span>
+          <span class="settings-popup-label">
+            <svg class="settings-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            Sound
+          </span>
           <button class="settings-toggle" id="soundToggle"></button>
         </div>
         <div class="settings-popup-row">
-          <span class="settings-popup-label">Turbo Mode</span>
+          <span class="settings-popup-label">
+            <svg class="settings-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Turbo Mode
+          </span>
           <button class="settings-toggle" id="turboSettingsToggle"></button>
+        </div>
+        <div class="settings-popup-row">
+          <span class="settings-popup-label">
+            <svg class="settings-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Max Bet Button
+          </span>
+          <button class="settings-toggle active" id="maxBetToggle"></button>
         </div>
       </div>
     </div>
@@ -1608,7 +1815,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
         </button>
       </div>
-      <button class="settings-btn">
+      <button class="settings-btn" id="desktopFairnessBtn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       </button>
     </div>
@@ -1630,6 +1837,53 @@
     </a>
   </nav>
 
+</div>
+
+<!-- Provably Fair Modal -->
+<div class="fairness-overlay" id="fairnessOverlay">
+  <div class="fairness-modal">
+    <button class="fairness-close" id="fairnessClose">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="fairness-title">This game is provably fair</div>
+    <div class="fairness-desc">
+      "Provably fair" means that every bet is transparent and verifiable — you can check the server seed, client seed, and results yourself to confirm the game wasn't tampered with. <a href="#">Learn more</a>
+    </div>
+
+    <div class="fairness-section-title">Current Session</div>
+
+    <div class="fairness-field-label">Client Seed</div>
+    <div class="fairness-field-value" id="fairnessClientSeed">—</div>
+
+    <div class="fairness-field-label">Server Seed Hash</div>
+    <div class="fairness-field-value" id="fairnessServerHash">—</div>
+
+    <div class="fairness-field-label">Nonce Counter</div>
+    <div class="fairness-field-value" id="fairnessNonce">0</div>
+
+    <div class="fairness-divider"></div>
+
+    <div class="fairness-section-title">Next Session Preview</div>
+
+    <div class="fairness-field-label">Next Client Seed (Optional)</div>
+    <div class="fairness-input-wrap">
+      <input type="text" id="fairnessNextClientSeed" placeholder="Leave empty for random seed">
+      <button class="fairness-refresh-btn" id="fairnessRefreshSeed" title="Generate random seed">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      </button>
+    </div>
+
+    <div class="fairness-field-label">Next Server Seed Hash</div>
+    <div class="fairness-field-value" id="fairnessNextServerHash">—</div>
+
+    <div class="fairness-actions">
+      <button class="fairness-btn primary" id="fairnessRotateBtn">Rotate Session</button>
+      <button class="fairness-btn secondary" id="fairnessVerifyBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Verify Latest Bet
+      </button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -2354,6 +2608,16 @@
     turboSettingsToggle.classList.toggle('active', turboMode);
   });
 
+  // Max Bet toggle
+  const maxBetToggle = document.getElementById('maxBetToggle');
+  let maxBetVisible = true;
+
+  maxBetToggle.addEventListener('click', () => {
+    maxBetVisible = !maxBetVisible;
+    maxBetToggle.classList.toggle('active', maxBetVisible);
+    maxBtn.style.display = maxBetVisible ? '' : 'none';
+  });
+
   // == Rakeback Popup ==
   const rakebackPill = document.querySelector('.rakeback-pill');
   const rakebackPopup = document.getElementById('rakebackPopup');
@@ -2387,6 +2651,118 @@
   document.addEventListener('click', () => {
     rakebackPopup.classList.remove('visible');
   });
+
+  // == Provably Fair Modal ==
+  const fairnessOverlay = document.getElementById('fairnessOverlay');
+  const fairnessClose = document.getElementById('fairnessClose');
+  const fairnessClientSeed = document.getElementById('fairnessClientSeed');
+  const fairnessServerHash = document.getElementById('fairnessServerHash');
+  const fairnessNonce = document.getElementById('fairnessNonce');
+  const fairnessNextClientSeed = document.getElementById('fairnessNextClientSeed');
+  const fairnessNextServerHash = document.getElementById('fairnessNextServerHash');
+  const fairnessRefreshSeed = document.getElementById('fairnessRefreshSeed');
+  const fairnessRotateBtn = document.getElementById('fairnessRotateBtn');
+  const fairnessVerifyBtn = document.getElementById('fairnessVerifyBtn');
+
+  function generateHex(len) {
+    const arr = new Uint8Array(len);
+    crypto.getRandomValues(arr);
+    return Array.from(arr, b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  function simpleHash(str) {
+    // Simple deterministic hash for display purposes
+    let h = 0x811c9dc5;
+    for (let i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = Math.imul(h, 0x01000193);
+    }
+    // Generate a long hex string from multiple rounds
+    let result = '';
+    for (let r = 0; r < 8; r++) {
+      h ^= (r + 1) * 0x9e3779b9;
+      h = Math.imul(h, 0x01000193);
+      result += (h >>> 0).toString(16).padStart(8, '0');
+    }
+    return result;
+  }
+
+  async function sha256Hex(str) {
+    if (crypto.subtle) {
+      try {
+        const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+        return Array.from(new Uint8Array(buf), b => b.toString(16).padStart(2, '0')).join('');
+      } catch(e) {}
+    }
+    return simpleHash(str);
+  }
+
+  let currentClientSeed = generateHex(16);
+  let currentServerSeed = generateHex(32);
+  let currentServerHash = simpleHash(currentServerSeed);
+  let currentNonce = 0;
+  let nextServerSeed = generateHex(32);
+  let nextServerHash = simpleHash(nextServerSeed);
+
+  async function initFairness() {
+    currentServerHash = await sha256Hex(currentServerSeed);
+    nextServerHash = await sha256Hex(nextServerSeed);
+    updateFairnessDisplay();
+  }
+
+  function updateFairnessDisplay() {
+    fairnessClientSeed.textContent = currentClientSeed;
+    fairnessServerHash.textContent = currentServerHash;
+    fairnessNonce.textContent = currentNonce;
+    fairnessNextServerHash.textContent = nextServerHash;
+  }
+
+  function incrementNonce() {
+    currentNonce++;
+    fairnessNonce.textContent = currentNonce;
+  }
+
+  // Open/close modal
+  function openFairnessModal() {
+    updateFairnessDisplay();
+    fairnessOverlay.classList.add('visible');
+  }
+  document.getElementById('fairnessBtn').addEventListener('click', openFairnessModal);
+  const desktopFairnessBtn = document.getElementById('desktopFairnessBtn');
+  if (desktopFairnessBtn) desktopFairnessBtn.addEventListener('click', openFairnessModal);
+
+  fairnessClose.addEventListener('click', () => {
+    fairnessOverlay.classList.remove('visible');
+  });
+
+  fairnessOverlay.addEventListener('click', (e) => {
+    if (e.target === fairnessOverlay) fairnessOverlay.classList.remove('visible');
+  });
+
+  // Refresh random client seed
+  fairnessRefreshSeed.addEventListener('click', () => {
+    fairnessNextClientSeed.value = generateHex(16);
+  });
+
+  // Rotate session
+  fairnessRotateBtn.addEventListener('click', async () => {
+    currentClientSeed = fairnessNextClientSeed.value.trim() || generateHex(16);
+    currentServerSeed = nextServerSeed;
+    currentServerHash = nextServerHash;
+    currentNonce = 0;
+    nextServerSeed = generateHex(32);
+    nextServerHash = await sha256Hex(nextServerSeed);
+    fairnessNextClientSeed.value = '';
+    updateFairnessDisplay();
+  });
+
+  // Verify latest bet (placeholder)
+  fairnessVerifyBtn.addEventListener('click', () => {
+    alert('Verification: Client Seed: ' + currentClientSeed + '\nServer Hash: ' + currentServerHash + '\nNonce: ' + currentNonce);
+  });
+
+  updateFairnessDisplay();
+  initFairness();
 
   // == Init ==
   generateBoard();
