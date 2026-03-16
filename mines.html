@@ -680,24 +680,31 @@
     cursor: not-allowed;
   }
 
-  .mines-count-row {
+  .mines-slider-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 10px;
   }
 
-  .mines-count-label {
-    font-size: 12px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.45);
-    letter-spacing: 0.04em;
+  .mines-slider-label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
-  .mines-count-val {
+  .mines-slider-label .mines-count-val {
     font-family: 'Outfit', sans-serif;
-    font-size: 18px;
+    font-size: 14px;
     font-weight: 700;
     color: var(--text-primary);
+  }
+
+  .mines-slider-row .coin-slider-track {
+    flex: 1;
+    min-width: 0;
   }
 
   .coin-slider-track {
@@ -1436,16 +1443,12 @@
 
       <!-- Mines Count Slider -->
       <div class="mines-count-group">
-        <div class="mines-count-row">
-          <span class="mines-count-label">💣 Mines</span>
-          <span class="mines-count-val" id="minesCountVal">3</span>
-        </div>
-        <div class="coin-slider-track">
-          <input type="range" class="coin-slider" id="minesSlider" min="1" max="24" value="3">
-        </div>
-        <div class="mines-count-row">
-          <span class="mines-count-label">💎 Gems</span>
-          <span class="mines-count-val" id="gemsCountVal">22</span>
+        <div class="mines-slider-row">
+          <div class="mines-slider-label">💣 <span class="mines-count-val" id="minesCountVal">3</span></div>
+          <div class="coin-slider-track">
+            <input type="range" class="coin-slider" id="minesSlider" min="1" max="24" value="3">
+          </div>
+          <div class="mines-slider-label">💎 <span class="mines-count-val" id="gemsCountVal">22</span></div>
         </div>
       </div>
 
